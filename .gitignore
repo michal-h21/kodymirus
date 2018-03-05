@@ -1,0 +1,9 @@
+*.aux
+*.toc
+*.xref
+*.4tc
+*.4ct
+*.log
+*.swp
+tags
+
