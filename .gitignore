@@ -6,4 +6,14 @@
 *.log
 *.swp
 tags
+*.bcf
+*.tmp
+*.dvi
+*.lg
+*.idv
+*.run.xml
+posts/*.css
+posts/*.html
+posts/*.pdf
+
 
