@@ -101,7 +101,8 @@ if mode=="publish" then
     -- make the output file name in the format YYYY-MM-DD-old-filename.html
   end
   settings.input = slug
-  settings.extensions = mkutils.add_extensions("-common_domfilters+tidy", settings.extensions)
+  -- settings.extensions = mkutils.add_extensions("-common_domfilters+tidy", settings.extensions)
+  settings.extensions = mkutils.add_extensions("-common_domfilters", settings.extensions)
   local quotepattern = '(['..("%^$().[]*+-?"):gsub("(.)", "%%%1")..'])'
   local mainfile = string.gsub(slug, quotepattern, "%%%1")
   settings.latex_par="-jobname="..slug
