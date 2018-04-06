@@ -3,6 +3,11 @@ local domfilter = require "make4ht-domfilter"
 local domobj = require "luaxml-domobject"
 local mkutils = require "mkutils"
 
+Make:enable_extension ( "tidy" )
+-- os.exit()
+-- Make:disable_extension ("common_domfilters")
+-- table.insert(settings.extensions,{type="-", name= "common_domfilters"})
+-- table.insert(settings.extensions,{type="+", name= "grrr"})
 local function make_yaml(tbl, level)
   local t = {}
   local level = level or 0
@@ -102,7 +107,7 @@ if mode=="publish" then
   end
   settings.input = slug
   -- settings.extensions = mkutils.add_extensions("-common_domfilters+tidy", settings.extensions)
-  settings.extensions = mkutils.add_extensions("-common_domfilters", settings.extensions)
+  -- settings.extensions = mkutils.add_extensions("-common_domfilters+tidy", settings.extensions)
   local quotepattern = '(['..("%^$().[]*+-?"):gsub("(.)", "%%%1")..'])'
   local mainfile = string.gsub(slug, quotepattern, "%%%1")
   settings.latex_par="-jobname="..slug
