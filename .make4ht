@@ -1,5 +1,8 @@
 filter_settings "staticsite" {
-  site_root = "out"
+  site_root = "out", 
+  map = {
+    [".css$"] = "css/"
+  }
 }
 if mode=="draft" then
   Make:htlatex {}
