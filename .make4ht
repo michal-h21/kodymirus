@@ -1,5 +1,5 @@
 filter_settings "staticsite" {
-  output_dir = "out"
+  site_root = "out"
 }
 if mode=="draft" then
   Make:htlatex {}
