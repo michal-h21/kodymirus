@@ -3,7 +3,7 @@ local outdir = os.getenv "kodymirus_root" or "out"
 filter_settings "staticsite" {
   site_root = outdir, 
   map = {
-    [".css$"] = "../css/"
+    [".css$"] = "css/"
   },
   header = {
      layout="post",
