@@ -1,6 +1,6 @@
 local lettersmith = require("lettersmith")
 local transducers = require "lettersmith.transducers"
-local rss = require "atom"
+-- local rss = require "atom"
 local map = transducers.map
 local reduce = transducers.reduce
 local filter  = transducers.filter
