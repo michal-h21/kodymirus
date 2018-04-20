@@ -11,6 +11,7 @@ local transform = lazy.transform
 local transformer = lazy.transformer
 local templates = require "template"
 local base_template = templates.base
+local rss = require "lettersmith.rss"
 
 
 local paths = lettersmith.paths("build")
@@ -42,6 +43,14 @@ local apply_template = make_transformer(function(doc)
   return merge(doc, {contents = rendered})
 end)
 
+local rss_gen = function(page, title)
+   return comp(
+   rss.generate_rss(page,"https://www.kodymirus.cz",title, ""),
+   html_filter,
+   lettersmith.docs
+  )
+end
+
 local builder = comp(lettersmith.docs)
 local html_builder = comp(
   apply_template,
@@ -51,5 +60,5 @@ local html_builder = comp(
 )
 
 
-lettersmith.build("www", builder(paths), html_builder(paths))
+lettersmith.build("www", builder(paths), html_builder(paths),rss_gen("feed.rss",  "Kodymirus")(paths))
 
