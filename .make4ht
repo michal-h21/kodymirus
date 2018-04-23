@@ -9,6 +9,24 @@ filter_settings "staticsite" {
      layout="post",
      date = function(parameters)
        return os.date("!%Y-%m-%d %T", parameters.time)
+     end,
+     abstract = function(parameters, dom)
+       local abstracts = dom:query_selector ".abstract"
+       print("abstract", #abstracts)
+       if #abstracts > 0 then
+         local paragraphs = {}
+         local first = abstracts[1]
+         -- get only non-empty paragraphs from the abstract
+         for _, el in ipairs(first:get_children()) do
+           if el:is_element() and el:get_element_name() == "p" and #el:get_children() > 0  then
+             paragraphs[#paragraphs+1] = el:serialize()
+             print("xxx", el:serialize())
+           end
+         end
+         -- remove the abstract from the document, it can be reinserted from the template
+         first:remove_node()
+         return table.concat(paragraphs, "\n")
+       end
      end
   }
 }
