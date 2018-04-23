@@ -1,4 +1,15 @@
 local outdir = os.getenv "kodymirus_root" or "out"
+local domfilter = require "make4ht-domfilter"
+
+-- remove the \maketitle environment from the HTML file, title will be inserted in the template
+local domprocess = domfilter{function(dom)
+  local maketitles = dom:query_selector(".maketitle")
+  for _, el in ipairs(maketitles) do
+    print "removing maketitle"
+    el:remove_node()
+  end
+  return dom
+end}
 
 filter_settings "staticsite" {
   site_root = outdir, 
@@ -36,6 +47,7 @@ if mode=="draft" then
   Make:htlatex {}
 elseif mode=="publish" then
   -- Make:htlatex {}
+  Make:match("html$", domprocess)
   Make:enable_extension "tidy"
   Make:enable_extension "staticsite"
   Make:htlatex {}
