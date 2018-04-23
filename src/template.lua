@@ -22,6 +22,8 @@ function template.base(doc)
     },
     body {
       article {
+        h.h1 {doc.title},
+        h.section{class="abstract", doc.abstract},
         doc.contents
       }
     }
