@@ -125,15 +125,26 @@ local wtf = function()
   end
 end
 
-local take_all_items = comp(take(10), map(function(doc) return {category=doc.category} end))
 local category_wtf = function()
+  local function xxx(doc)
+    return {category=doc.category}
+  end
+  local take_all_items = comp(
+    take(10),
+    map(xxx)
+  )
   return function(iter, ...)
     local items =  {}
+    print "xxx"
     local items = into(take_all_items,iter, ...)
+    print "xxx"
     for _, x in ipairs(items) do
       print(x.category)
     end
-
+    return wrap_in_iter({
+      contents="ahoj",
+      relative_filepath = "xxx"
+    })
   end
 end
 
