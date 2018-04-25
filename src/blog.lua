@@ -158,7 +158,7 @@ local category_rss = function()
     local categories = {}
     local items = into(take_all_items,iter, ...)
     for _, x in ipairs(items) do
-      local category = x.category
+      local category = x.category or "uncatagorized"
       local curr = categories[category] or {}
       table.insert(curr, x)
       categories[category] = curr
