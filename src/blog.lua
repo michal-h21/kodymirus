@@ -12,17 +12,21 @@ local transformer = lazy.transformer
 local templates = require "template"
 local base_template = templates.base
 local rss = require "lettersmith.rss"
+local rss_table = require "rss".rss_table
 local render_permalinks = require "lettersmith.permalinks".render_permalinks
 local wrap_in_iter = require("lettersmith.plugin_utils").wrap_in_iter
+local archive = require "archive".archive
+
 
 
 local take_while = transducers.take_while
 local take = transducers.take
 local into = transducers.into
 
+local shallow_copy = require "lettersmith.table_utils".shallow_copy
 
 -- variables 
-local site_url = "https:www.kodymirus.cz"
+local site_url = "https://www.kodymirus.cz"
 local site_title = "Kodymirus"
 
 local paths = lettersmith.paths("build")
@@ -75,13 +79,18 @@ local abstract_to_content = make_transformer(function(doc)
   return merge(doc, {contents = newcontent})
 end)
 
+
+local permalinks = comp (
+   render_permalinks ":yyyy/:mm/:slug.html"
+)
+
 local rss_gen = function(page, title, url)
   local title = title or site_title
   local url = url or site_url
    return comp(
    rss.generate_rss(page,url,title, ""),
+   permalinks,
    abstract_to_content,
-   render_permalinks ":yyyy/:mm/:slug.html",
    html_filter
   )
 end
@@ -94,13 +103,15 @@ local make_rss = function(page)
 end
 
 
+
+
 local builder = comp(
   nonhtml_filter,
   lettersmith.docs
 )
 local html_builder = comp(
   apply_template,
-  render_permalinks ":yyyy/:mm/:slug.html",
+  permalinks,
   add_defaults,
   html_filter,
   lettersmith.docs
@@ -115,37 +126,61 @@ local category_rss = function(category)
 end
 
 local wtf = function()
-  local items = {{relative_filepath = "wtf1", contents="wtf1"}, {relative_filepath = "wtf2", contents="wtf2"}}
+  local items = {{relative_filepath = "wtf1", contents="wtf1"}, {relative_filepath = "wtf2", contents="wtf2"}, {relative_filepath = "wtf3", contents="wtf2"}}
   return function(iter, ...)
+    -- for x,y in pairs(iter) do
+    --   local fn = lettersmith.load_doc(y)
+    --   print("doc", fn, x, y)
+    --   print(fn.category)
+    -- end
+    -- local items = lettersmith.docs(iter, ...)
+    -- local items = into(take_all_items,iter, ...)
     return coroutine.wrap(function()
       for _,v in ipairs(items) do
+        print("wtf", v)
         coroutine.yield(v)
       end
     end)
   end
 end
 
-local category_wtf = function()
+
+local category_rss = function()
   local function xxx(doc)
-    return {category=doc.category}
+    return shallow_copy(doc)
   end
   local take_all_items = comp(
-    take(10),
+    take_while(function()return true end),
     map(xxx)
   )
   return function(iter, ...)
-    local items =  {}
-    print "xxx"
+    -- local items =  {}
+    local categories = {}
     local items = into(take_all_items,iter, ...)
-    print "xxx"
     for _, x in ipairs(items) do
-      print(x.category)
+      local category = x.category
+      local curr = categories[category] or {}
+      table.insert(curr, x)
+      categories[category] = curr
     end
-    return wrap_in_iter({
-      contents="ahoj",
-      relative_filepath = "xxx"
-    })
+    return coroutine.wrap(function()
+      -- coroutine.yield({relative_filepath="uggggg", contents= "adfsff"})
+      for x, y in pairs(categories) do
+        print("writing", x)
+        local feed_name = x.. ".rss"
+        coroutine.yield {relative_filepath = feed_name, contents= rss_table(y, feed_name, site_url, site_title)}
+      end
+    end)
   end
+end
+
+local category_rss_build = function()
+  return comp(
+    category_rss(),
+    permalinks,
+    html_filter,
+    lettersmith.docs
+  )
 end
 
 
@@ -156,9 +191,10 @@ lettersmith.build(
   builder(paths), -- process all files
   wtf()(paths),
   html_builder(paths), -- process only html files
-  category_wtf()(paths),
-  category_rss("pokus")(paths),
-  category_rss("nonpokus")(paths),
+  category_rss_build()(paths),
+  -- category_rss("pokus")(paths),
+  -- category_rss("nonpokus")(paths),
+  -- archive("feed.rss",  "Kodymirus","https://www.kodymirus.cz")(paths),
   make_rss("feed.rss",  "Kodymirus","https://www.kodymirus.cz")(paths)
 )
 
