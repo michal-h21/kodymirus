@@ -125,25 +125,6 @@ local category_rss = function(category)
   )
 end
 
-local wtf = function()
-  local items = {{relative_filepath = "wtf1", contents="wtf1"}, {relative_filepath = "wtf2", contents="wtf2"}, {relative_filepath = "wtf3", contents="wtf2"}}
-  return function(iter, ...)
-    -- for x,y in pairs(iter) do
-    --   local fn = lettersmith.load_doc(y)
-    --   print("doc", fn, x, y)
-    --   print(fn.category)
-    -- end
-    -- local items = lettersmith.docs(iter, ...)
-    -- local items = into(take_all_items,iter, ...)
-    return coroutine.wrap(function()
-      for _,v in ipairs(items) do
-        print("wtf", v)
-        coroutine.yield(v)
-      end
-    end)
-  end
-end
-
 
 local category_rss = function()
   local function xxx(doc)
@@ -191,7 +172,6 @@ end
 lettersmith.build(
   "www", -- output dir
   builder(paths), -- process all files
-  wtf()(paths),
   html_builder(paths), -- process only html files
   category_rss_build()(paths),
   -- category_rss("pokus")(paths),
