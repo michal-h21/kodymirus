@@ -147,7 +147,9 @@ end
 
 local category_rss = function()
   local function xxx(doc)
-    return shallow_copy(doc)
+    local newdoc = shallow_copy(doc)
+    newdoc.contents = newdoc.abstract or newdoc.contents
+    return newdoc
   end
   local take_all_items = comp(
     take_while(function()return true end),
