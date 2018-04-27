@@ -89,14 +89,23 @@ local permalinks = comp (
    render_permalinks ":yyyy/:mm/:slug.html"
 )
 
+-- prepare list of posts for archives or RSS
+local archives = comp(
+  permalinks,
+  abstract_to_content, -- don't show full posts
+  post_filter, -- show only posts in archives
+  html_filter
+)
+
 local rss_gen = function(page, title, url)
   local title = title or site_title
   local url = url or site_url
    return comp(
    rss.generate_rss(page,url,title, ""),
-   permalinks,
-   abstract_to_content,
-   html_filter
+   archives
+   -- permalinks,
+   -- abstract_to_content,
+   -- html_filter
   )
 end
 
@@ -165,8 +174,7 @@ end
 local category_rss_build = function()
   return comp(
     category_rss(),
-    permalinks,
-    html_filter,
+    archives,
     lettersmith.docs
   )
 end
