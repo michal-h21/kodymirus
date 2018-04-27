@@ -175,7 +175,6 @@ local category_rss_build = comp(
 )
 
 
- 
 -- build pages
 lettersmith.build(
   "www", -- output dir
