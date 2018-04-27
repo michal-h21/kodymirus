@@ -109,9 +109,10 @@ local rss_gen = function(page, title, url)
   )
 end
 
-local make_rss = function(page)
+local make_main_rss = function(name)
   return comp(
-    rss_gen(page),
+    rss_gen(name),
+    archives,
     lettersmith.docs
   )
 end
@@ -196,5 +197,6 @@ lettersmith.build(
   -- category_rss("nonpokus")(paths),
   -- archive("feed.rss",  "Kodymirus","https://www.kodymirus.cz")(paths),
   make_rss("feed.rss",  "Kodymirus","https://www.kodymirus.cz")(paths)
+  make_main_rss("feed.rss")(paths)
 )
 
