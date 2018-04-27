@@ -59,7 +59,7 @@ local post_filter = transformer(filter(function(doc)
   return doc.layout == "post"
 end))
 
-local category_filter = function(category) 
+local category_filter = function(category)
   return transformer(filter(function(doc)
     return doc.category == category
   end))
@@ -139,9 +139,14 @@ end
 local categories_to_rss = function(count)
   return transformer(map(function(doc)
     local feed_name = doc.category ..".rss"
-    return merge(doc, {relative_filepath = feed_name, contents = rss_table(doc.items, feed_name, site_url, site_title,site_description,  count)})
+    return merge(doc, {
+      relative_filepath = feed_name,
+      contents = rss_table(doc.items, feed_name, site_url, site_title,site_description,  count)
+    })
   end))
 end
+
+
 
 local categories = function()
   return function(iter, ...)
