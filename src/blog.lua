@@ -29,6 +29,7 @@ local shallow_copy = require "lettersmith.table_utils".shallow_copy
 local site_url = "https://www.kodymirus.cz"
 local site_title = "Kodymirus"
 local site_description = "Kodymirus blog"
+local rss_count = 20
 
 local paths = lettersmith.paths("build")
 local comp = require("lettersmith.transducers").comp
@@ -170,6 +171,7 @@ end
 
 local category_rss_build = comp(
   categories_to_rss(20),
+  categories_to_rss(rss_count),
   categories(),
   archives,
   lettersmith.docs
