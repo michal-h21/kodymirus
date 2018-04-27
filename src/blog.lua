@@ -28,6 +28,7 @@ local shallow_copy = require "lettersmith.table_utils".shallow_copy
 -- variables 
 local site_url = "https://www.kodymirus.cz"
 local site_title = "Kodymirus"
+local site_description = "Kodymirus blog"
 
 local paths = lettersmith.paths("build")
 local comp = require("lettersmith.transducers").comp
@@ -142,6 +143,7 @@ local categories_to_rss = make_transformer(function(doc)
   local feed_name = doc.category ..".rss"
   return merge(doc, {relative_filepath = feed_name, contents= rss_table(doc.items, feed_name, site_url, site_title)})
 end)
+    return merge(doc, {relative_filepath = feed_name, contents = rss_table(doc.items, feed_name, site_url, site_title,site_description,  count)})
 
 local categories = function()
   return function(iter, ...)
@@ -164,7 +166,7 @@ local categories = function()
 end
 
 local category_rss_build = comp(
-  categories_to_rss,
+  categories_to_rss(20),
   categories(),
   archives,
   lettersmith.docs

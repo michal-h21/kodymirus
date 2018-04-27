@@ -67,10 +67,15 @@ local function to_rss_item_from_doc(doc, root_url_string)
 end
 
 
-local function generate_rss(items, relative_filepath, site_url, site_title, site_description)
+local function generate_rss(items, relative_filepath, site_url, site_title, site_description, count)
   local newitems = {}
-  for _, item in ipairs(items) do
-    table.insert(newitems, to_rss_item_from_doc(item, site_url))
+  -- for _, item in ipairs(items) do
+  local count = count or #items
+  for i = 1, #items do
+    if i <= count then
+      local item = items[i]
+      table.insert(newitems, to_rss_item_from_doc(item, site_url))
+    end
   end
   local feed_url = site_url .. "/" .. relative_filepath
   local context_table = {
