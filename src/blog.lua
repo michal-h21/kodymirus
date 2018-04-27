@@ -99,26 +99,6 @@ local archives = comp(
   html_filter
 )
 
-local rss_gen = function(page, title, url)
-  local title = title or site_title
-  local url = url or site_url
-   return comp(
-   rss.generate_rss(page,url,title, ""),
-   archives
-  )
-end
-
-local make_main_rss = function(name)
-  return comp(
-    rss_gen(name),
-    archives,
-    lettersmith.docs
-  )
-end
-
-
-
-
 local builder = comp(
   nonhtml_filter,
   lettersmith.docs
@@ -169,8 +149,25 @@ local categories = function()
   end
 end
 
+
+local main_rss = function()
+  return function(iter, ...)
+    local items = into(take_items(function() return true end),iter, ...)
+    return coroutine.wrap(function()
+      coroutine.yield {category="feed", items = items}
+    end)
+  end
+end
+
+
+local make_main_rss = comp(
+  categories_to_rss(rss_count),
+  main_rss(), -- this make only one category, "feed", which is then saved as feed.rss
+  archives,
+  lettersmith.docs
+)
+
 local category_rss_build = comp(
-  categories_to_rss(20),
   categories_to_rss(rss_count),
   categories(),
   archives,
@@ -188,6 +185,6 @@ lettersmith.build(
   -- category_rss("pokus")(paths),
   -- category_rss("nonpokus")(paths),
   -- archive("feed.rss",  "Kodymirus","https://www.kodymirus.cz")(paths),
-  make_main_rss("feed.rss")(paths)
+  make_main_rss(paths)
 )
 
