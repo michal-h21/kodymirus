@@ -7,7 +7,7 @@ local html, head, body, title, link, article = h.html, h.head, h.body, h.title, 
 local function styles(s)
   local t = {}
   for _, style in ipairs(s) do
-    table.insert(t, link {rel="stylesheet", type="text/css", href="css/"..  style})
+    table.insert(t, link {rel="stylesheet", type="text/css", href="/css/"..  style})
   end
   return t
 end
