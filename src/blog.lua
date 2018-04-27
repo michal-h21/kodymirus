@@ -73,7 +73,8 @@ local add_defaults = make_transformer(function(doc)
 end)
 
 local apply_template = make_transformer(function(doc)
-  local rendered = base_template(doc)
+  local template = doc.template or base_template
+  local rendered = template(doc)
   return merge(doc, {contents = rendered})
 end)
 
