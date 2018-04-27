@@ -60,11 +60,6 @@ local post_filter = transformer(filter(function(doc)
   return doc.layout == "post"
 end))
 
-local category_filter = function(category)
-  return transformer(filter(function(doc)
-    return doc.category == category
-  end))
-end
 
 local html_filter = make_filter("html$")
 local nonhtml_filter = make_negative_filter("html$")
