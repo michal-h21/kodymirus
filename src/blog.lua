@@ -54,6 +54,10 @@ local make_negative_filter = function(reg)
   ))
 end
 
+local post_filter = transformer(filter(function(doc)
+  return doc.layout == "post"
+end))
+
 local category_filter = function(category) 
   return transformer(filter(function(doc)
     return doc.category == category
