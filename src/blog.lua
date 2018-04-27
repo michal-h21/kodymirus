@@ -89,7 +89,6 @@ local permalinks = comp (
 -- prepare list of posts for archives or RSS
 local archives = comp(
   permalinks,
-  abstract_to_content, -- don't show full posts
   post_filter, -- show only posts in archives
   html_filter
 )
@@ -158,6 +157,7 @@ end
 local make_main_rss = comp(
   categories_to_rss(rss_count),
   main_rss(), -- this make only one category, "feed", which is then saved as feed.rss
+  abstract_to_content, -- don't show full posts
   archives,
   lettersmith.docs
 )
@@ -165,6 +165,7 @@ local make_main_rss = comp(
 local category_rss_build = comp(
   categories_to_rss(rss_count),
   categories(),
+  abstract_to_content, -- don't show full posts
   archives,
   lettersmith.docs
 )
