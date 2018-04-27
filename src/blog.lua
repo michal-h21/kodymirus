@@ -132,13 +132,11 @@ local html_builder = comp(
   lettersmith.docs
 )
 
-local category_rss = function(category)
-  return comp(
-     rss_gen(category .. ".rss"),
-     category_filter(category),
-     lettersmith.docs
-  )
+
+local function take_items(criterium)
+  return comp(take_while(criterium),map(function(doc) return shallow_copy(doc) end))
 end
+
 
 local categories_to_rss = make_transformer(function(doc)
   local feed_name = doc.category ..".rss"
@@ -146,18 +144,11 @@ local categories_to_rss = make_transformer(function(doc)
 end)
 
 local categories = function()
-  local function xxx(doc)
-    local newdoc = shallow_copy(doc)
-    return newdoc
-  end
-  local take_all_items = comp(
-    take_while(function()return true end),
-    map(xxx)
-  )
   return function(iter, ...)
     -- local items =  {}
     local categories = {}
-    local items = into(take_all_items,iter, ...)
+
+    local items = into(take_items(function() return true end),iter, ...)
     for _, x in ipairs(items) do
       local category = x.category or "uncatagorized"
       local curr = categories[category] or {}
@@ -165,25 +156,19 @@ local categories = function()
       categories[category] = curr
     end
     return coroutine.wrap(function()
-      -- coroutine.yield({relative_filepath="uggggg", contents= "adfsff"})
       for x, y in pairs(categories) do
-        -- print("writing", x)
-        -- local feed_name = x.. ".rss"
-        -- coroutine.yield {relative_filepath = feed_name, contents= rss_table(y, feed_name, site_url, site_title)}
         coroutine.yield {category = x, items = y}
       end
     end)
   end
 end
 
-local category_rss_build = function()
-  return comp(
-    categories_to_rss,
-    categories(),
-    archives,
-    lettersmith.docs
-  )
-end
+local category_rss_build = comp(
+  categories_to_rss,
+  categories(),
+  archives,
+  lettersmith.docs
+)
 
 
  
@@ -192,11 +177,10 @@ lettersmith.build(
   "www", -- output dir
   builder(paths), -- process all files
   html_builder(paths), -- process only html files
-  category_rss_build()(paths),
+  category_rss_build(paths),
   -- category_rss("pokus")(paths),
   -- category_rss("nonpokus")(paths),
   -- archive("feed.rss",  "Kodymirus","https://www.kodymirus.cz")(paths),
-  make_rss("feed.rss",  "Kodymirus","https://www.kodymirus.cz")(paths)
   make_main_rss("feed.rss")(paths)
 )
 
