@@ -104,9 +104,6 @@ local rss_gen = function(page, title, url)
    return comp(
    rss.generate_rss(page,url,title, ""),
    archives
-   -- permalinks,
-   -- abstract_to_content,
-   -- html_filter
   )
 end
 
