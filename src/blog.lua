@@ -139,8 +139,12 @@ local category_rss = function(category)
   )
 end
 
+local categories_to_rss = make_transformer(function(doc)
+  local feed_name = doc.category ..".rss"
+  return merge(doc, {relative_filepath = feed_name, contents= rss_table(doc.items, feed_name, site_url, site_title)})
+end)
 
-local category_rss = function()
+local categories = function()
   local function xxx(doc)
     local newdoc = shallow_copy(doc)
     return newdoc
@@ -162,9 +166,10 @@ local category_rss = function()
     return coroutine.wrap(function()
       -- coroutine.yield({relative_filepath="uggggg", contents= "adfsff"})
       for x, y in pairs(categories) do
-        print("writing", x)
-        local feed_name = x.. ".rss"
-        coroutine.yield {relative_filepath = feed_name, contents= rss_table(y, feed_name, site_url, site_title)}
+        -- print("writing", x)
+        -- local feed_name = x.. ".rss"
+        -- coroutine.yield {relative_filepath = feed_name, contents= rss_table(y, feed_name, site_url, site_title)}
+        coroutine.yield {category = x, items = y}
       end
     end)
   end
@@ -172,7 +177,8 @@ end
 
 local category_rss_build = function()
   return comp(
-    category_rss(),
+    categories_to_rss,
+    categories(),
     archives,
     lettersmith.docs
   )
