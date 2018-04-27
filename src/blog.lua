@@ -106,6 +106,7 @@ local html_builder = comp(
 )
 
 
+-- transform document iterator into table
 local function take_items(criterium)
   return comp(take_while(criterium),map(function(doc) return shallow_copy(doc) end))
 end
