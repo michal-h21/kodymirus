@@ -94,6 +94,7 @@ local permalinks = comp (
 -- prepare list of posts for archives or RSS
 local archives = comp(
   permalinks,
+  add_defaults,
   post_filter, -- show only posts in archives
   html_filter
 )
@@ -102,6 +103,8 @@ local builder = comp(
   nonhtml_filter,
   lettersmith.docs
 )
+
+
 local html_builder = comp(
   apply_template,
   permalinks,
@@ -111,9 +114,10 @@ local html_builder = comp(
 )
 
 
+-- index page generation
 local make_index = function(name)
   -- take latest posts and compile them to a table
-  local take_news = comp(take(index_count), map(function(doc) return doc end)) 
+  local take_news = comp(take(index_count), map(function(doc) return shallow_copy(doc) end)) 
   return function(iter, ...)
     local items = into(take_news, iter, ...)
     return wrap_in_iter 
@@ -127,12 +131,11 @@ local make_index = function(name)
   end
 end
 
+
 local index_builder = comp(
   apply_template,
   make_index("index.html"),
-  permalinks,
-  add_defaults,
-  html_filter,
+  archives,
   lettersmith.docs
 )
 
