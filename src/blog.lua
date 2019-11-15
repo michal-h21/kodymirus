@@ -27,10 +27,13 @@ local into = transducers.into
 local shallow_copy = require "lettersmith.table_utils".shallow_copy
 
 -- variables
-local site_url = "https://www.kodymirus.cz"
-local site_title = "Kodymirus"
-local site_description = "Kodymirus blog"
+local site_url = config.site_url 
+local site_title = config.site_title 
+local site_description = config.site_description  
+-- number of items in the RSS feed
 local rss_count = 20
+-- number of items on the index page
+local index_count = 5
 
 local paths = lettersmith.paths("build")
 local comp = require("lettersmith.transducers").comp
@@ -67,11 +70,12 @@ local nonhtml_filter = make_negative_filter("html$")
 
 local add_defaults = make_transformer(function(doc)
   -- potentially add default variables
+  doc.menu = config.menu
   return doc
 end)
 
 local apply_template = make_transformer(function(doc)
-  local template = doc.template or base_template
+  local template = templates[doc.template] or base_template
   local rendered = template(doc)
   return merge(doc, {contents = rendered})
 end)
@@ -106,7 +110,26 @@ local html_builder = comp(
   lettersmith.docs
 )
 
+
+local make_index = function(name)
+  -- take latest posts and compile them to a table
+  local take_news = comp(take(index_count), map(function(doc) return doc end)) 
+  return function(iter, ...)
+    local items = into(take_news, iter, ...)
+    return wrap_in_iter 
+    {
+      title = site_title,
+      relative_filepath = name,
+      items = items,
+      contents = "",
+      template = "index"
+    }
+  end
+end
+
 local index_builder = comp(
+  apply_template,
+  make_index("index.html"),
   add_defaults,
   html_filter,
   lettersmith.docs
