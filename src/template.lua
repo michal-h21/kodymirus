@@ -5,6 +5,7 @@ local h = h5tk.init(true)
 local html, head, body, title, link, article = h.html, h.head, h.body, h.title, h.link, h.article
 
 local function styles(s)
+  local s = s or {}
   local t = {}
   for _, style in ipairs(s) do
     table.insert(t, link {rel="stylesheet", type="text/css", href="/css/"..  style})
