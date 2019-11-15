@@ -4,6 +4,8 @@ local menuitem = function(title, href) return {title = title, href= href} end
 return {
   menu = {
     menuitem("Home", "index.html")
-  }
-
+  },
+  site_url = "https://www.kodymirus.cz",
+  site_title = "Kodymirus",
+  site_description = "Kodymirus blog"
 }
