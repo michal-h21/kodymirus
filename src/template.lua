@@ -13,7 +13,7 @@ local function styles(s)
   return t
 end
 
-function template.base(doc)
+function root(doc)
   return "<!DOCTYPE html>\n" .. (h.emit(
   html { lang="en", 
     head {
@@ -22,15 +22,57 @@ function template.base(doc)
       (styles(doc.styles))
     },
     body {
-      article {
+      doc.contents
+    }
+  }))
+end
+
+function template.base(doc)
+  -- return "<!DOCTYPE html>\n" .. (h.emit(
+  -- html { lang="en", 
+  --   head {
+  --     h.meta {charset="utf-8"},
+  --     title { doc.title },
+  --     (styles(doc.styles))
+  --   },
+  --   body {
+      -- article {
+      --   h.h1 {doc.title},
+      --   h.section{class="abstract", doc.abstract},
+      --   doc.contents
+      -- }
+    -- }
+  -- }
+  -- ))
+  return root {
+    title = doc.title,
+    styles = doc.styles,
+    contents = article {
         h.h1 {doc.title},
         h.section{class="abstract", doc.abstract},
         doc.contents
       }
-    }
   }
-  ))
 
 end
 
+function template.index(doc)
+  return root {
+    title = doc.title,
+    styles = doc.styles,
+    contents = article {
+      function()
+        local t = {}
+        for k,v in ipairs(doc.items) do
+          print(v.title)
+          t[#t+1 ] = article {
+            h.h1{ h.a {href=v.relative_filepath, v.title }}
+
+          }
+        end
+        return t
+      end
+    }
+  }
+end
 return template
