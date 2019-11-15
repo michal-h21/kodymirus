@@ -130,6 +130,7 @@ end
 local index_builder = comp(
   apply_template,
   make_index("index.html"),
+  permalinks,
   add_defaults,
   html_filter,
   lettersmith.docs
