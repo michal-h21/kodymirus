@@ -16,6 +16,7 @@ local rss_table = require "rss".rss_table
 local render_permalinks = require "lettersmith.permalinks".render_permalinks
 local wrap_in_iter = require("lettersmith.plugin_utils").wrap_in_iter
 local archive = require "archive".archive
+local config = require "config"
 
 
 
@@ -105,6 +106,12 @@ local html_builder = comp(
   lettersmith.docs
 )
 
+local index_builder = comp(
+  add_defaults,
+  html_filter,
+  lettersmith.docs
+)
+
 
 -- transform document iterator into table
 local function take_items(criterium)
@@ -175,6 +182,7 @@ local category_rss_build = comp(
 -- build pages
 lettersmith.build(
   "www", -- output dir
+  index_builder(paths),
   builder(paths), -- process all files
   html_builder(paths), -- process only html files
   category_rss_build(paths),
