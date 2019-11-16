@@ -13,7 +13,7 @@ local function generate_name(names, min, max)
   local name_len = math.random(max - min) + min 
   local new_name = {}
   for i = 1, name_len do 
-    local next_word = math.random(#names)
+    local next_word = math.random(#names) 
     new_name[#new_name+1] = names[next_word]
   end
   return new_name
@@ -29,6 +29,9 @@ local function generate_posts(file_root, count, names, categories, current_time)
     local new_name = generate_name(names, 2, 6)
     local filename = file_root .. make_filename(new_name, new_time) .. ".html"
     local date = os.date("%Y-%m-%d %H:%M:%S", new_time)
+    local category = categories[math.random(#categories)]
+    -- sample text
+    local text = table.concat(generate_name(names, 399, 699), " ")
     local header = string.format(
 [[---
 layout: 'post'
@@ -36,10 +39,11 @@ title: '%s'
 abstract: '<p>hello abstract</p>'
 time: %i
 date: '%s'
+category: '%s'
 ---
 
-]], table.concat(new_name, " "), new_time,  date)
-    build_post(filename, header, "<h1>Hello world</h1>")
+]], table.concat(new_name, " "), new_time,  date, category)
+    build_post(filename, header, "<p>" .. text .. "</p>")
   end
 end
 
@@ -61,6 +65,6 @@ math.randomseed(current_time)
 
 local file_root = "test/posts/"
 
-generate_posts(file_root,256, names_table, categories, current_time)
+generate_posts(file_root,524, names_table, categories, current_time)
 
 -- os.execute("lua src/blog.lua " .. file_root)
