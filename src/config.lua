@@ -8,5 +8,6 @@ return {
   site_url = "https://www.kodymirus.cz",
   site_title = "Kodymirus",
   site_description = "Kodymirus blog", 
-  path = "build"
+  path = "build",
+  output_dir = "www"
 }
