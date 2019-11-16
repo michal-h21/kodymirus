@@ -15,16 +15,20 @@ local rss = require "lettersmith.rss"
 local rss_table = require "rss".rss_table
 local render_permalinks = require "lettersmith.permalinks".render_permalinks
 local wrap_in_iter = require("lettersmith.plugin_utils").wrap_in_iter
+local comp = require("lettersmith.transducers").comp
 local archive = require "archive".archive
 local config = require "config"
 
 
 
-local take_while = transducers.take_while
-local take = transducers.take
+
 local into = transducers.into
 
 local shallow_copy = require "lettersmith.table_utils".shallow_copy
+
+local take_while = transducers.take_while
+local take = transducers.take
+
 
 -- variables
 local site_url = config.site_url 
@@ -35,11 +39,9 @@ local rss_count = config.rss_count or 20
 -- number of items on the index page
 local index_count = config.index_count or 5
 local blog_path = arg[1] or config.path or "build"
-
-
+local output_dir = config.output_dir or "www"
 
 local paths = lettersmith.paths(blog_path)
-local comp = require("lettersmith.transducers").comp
 
 -- local render_mustache = require("lettersmith.mustache").choose_mustache
 
@@ -90,6 +92,16 @@ local abstract_to_content = make_transformer(function(doc)
 end)
 
 
+-- transform document iterator into table
+local function take_items(criterium)
+  return comp(take_while(criterium),map(function(doc) return shallow_copy(doc) end))
+end
+
+-- transform number of documents into table
+local function take_number(index_count)  
+  return comp(take(index_count), map(function(doc) return shallow_copy(doc) end)) 
+end
+
 local permalinks = comp (
    render_permalinks ":yyyy/:mm/:slug.html"
 )
@@ -118,35 +130,48 @@ local html_builder = comp(
 
 
 -- index page generation
-local make_index = function(name)
+local make_index = function(name, index_count, template)
   -- take latest posts and compile them to a table
-  local take_news = comp(take(index_count), map(function(doc) return shallow_copy(doc) end)) 
   return function(iter, ...)
-    local items = into(take_news, iter, ...)
+    local items 
+    if index_count then
+      items = into(take_number(index_count), iter, ...)
+    else
+      items = into(take_items(function() return true end),iter, ...)
+    end
     return wrap_in_iter 
     {
       title = site_title,
       relative_filepath = name,
       items = items,
       contents = "",
-      template = "index"
+      template = template
     }
   end
 end
 
 
-local index_builder = comp(
-  apply_template,
-  make_index("index.html"),
+-- local index_builder = comp(
+--   apply_template,
+--   make_index("index.html"),
+--   archives,
+--   lettersmith.docs
+-- )
+
+
+local main_archive_builder = function(filename, template, count)
+  return comp(
+  apply_template, 
+  make_index(filename, count, template),
   archives,
   lettersmith.docs
-)
-
-
--- transform document iterator into table
-local function take_items(criterium)
-  return comp(take_while(criterium),map(function(doc) return shallow_copy(doc) end))
+  )
 end
+
+local index_builder = main_archive_builder("index.html", "index", index_count)
+local archive = main_archive_builder("archive.html", "index")
+
+
 
 
 local categories_to_rss = function(count)
@@ -211,8 +236,9 @@ local category_rss_build = comp(
 
 -- build pages
 lettersmith.build(
-  "www", -- output dir
+  output_dir, -- output dir
   index_builder(paths),
+  archive(paths),
   builder(paths), -- process all files
   html_builder(paths), -- process only html files
   category_rss_build(paths),
