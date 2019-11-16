@@ -31,11 +31,14 @@ local site_url = config.site_url
 local site_title = config.site_title 
 local site_description = config.site_description  
 -- number of items in the RSS feed
-local rss_count = 20
+local rss_count = config.rss_count or 20
 -- number of items on the index page
-local index_count = 5
+local index_count = config.index_count or 5
+local blog_path = arg[1] or config.path or "build"
 
-local paths = lettersmith.paths("build")
+
+
+local paths = lettersmith.paths(blog_path)
 local comp = require("lettersmith.transducers").comp
 
 -- local render_mustache = require("lettersmith.mustache").choose_mustache
