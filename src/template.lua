@@ -18,7 +18,7 @@ local function styles(s)
   local s = s or {}
   local t = {}
   for _, style in ipairs(s) do
-    table.insert(t, link {rel="stylesheet", type="text/css", href="/css/"..  style})
+    table.insert(t, link {rel="stylesheet", type="text/css", href=style})
   end
   return t
 end
@@ -29,7 +29,8 @@ function root(doc)
     head {
       h.meta {charset="utf-8"},
       title { doc.title },
-      (styles(doc.styles))
+      (styles(doc.styles)),
+      h.style{"body{max-width:60em;margin:0 auto;}"}
     },
     body {
       doc.contents

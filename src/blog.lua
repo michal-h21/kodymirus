@@ -78,6 +78,8 @@ local nonhtml_filter = make_negative_filter("html$")
 local add_defaults = make_transformer(function(doc)
   -- potentially add default variables
   doc.menu = config.menu
+  doc.styles = doc.styles or {}
+  table.insert(doc.styles, "https://unpkg.com/basic-css-typography-reset@1.0.0/typography.min.css")
   doc.author = doc.author or site_author
   return doc
 end)
@@ -165,6 +167,7 @@ end
 local main_archive_builder = function(filename, template, count)
   return comp(
   apply_template, 
+  add_defaults,
   make_index(filename, count, template),
   archives,
   lettersmith.docs
@@ -215,6 +218,7 @@ end
 
 local categories_archive_builder = comp(
   apply_template,
+  add_defaults,
   categories_archive("Archive by category", "category-archive.html", "categoryarchive"),
   categories(),
   archives,
