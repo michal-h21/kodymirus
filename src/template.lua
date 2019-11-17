@@ -1,4 +1,5 @@
 local h5tk = require "h5tk"
+local os = require "os"
 
 local template = {}
 
@@ -65,21 +66,20 @@ function template.base(doc)
 
 end
 
+local function archive_item(item)
+  return h.p{os.date( "%Y-%m-%d", item.time ), h.a {href=item.relative_filepath, item.title}}
+end
+
 function template.index(doc)
   return root {
     title = doc.title,
     styles = doc.styles,
     contents = article {
-      function()
-        local t = {}
-        for k,v in ipairs(doc.items) do
-          t[#t+1 ] = article {
-            h.h1{ h.a {href=v.relative_filepath, v.title }}
-
-          }
-        end
-        return t
-      end
+      map(function(v)
+        return article {
+          h.h1{ h.a {href=v.relative_filepath, v.title }}
+        }
+      end, doc.items)
     }
   }
 end
@@ -89,14 +89,19 @@ function template.categoryarchive(doc)
     title = doc.title,
     styles = doc.styles,
     contents = article {
+      h.h1 {doc.title},
+      h.details{open="",
+        h.summary {"Table of contents"},
+        h.nav{
+          map(function(category)
+            return h.div {h.a{href="#" .. category.name, category.name}}
+          end, doc.categories)
+        }
+      },
       map(function(category)
         return article {
-          h.h1 {category.name}, 
-          h.ul{
-            map(function(item)
-              return h.li {h.a {href=item.relative_filepath, item.title}}
-            end, category.items)
-          }
+          h.h1 {id=category.name, category.name}, 
+          map(archive_item, category.items)
         }
       end, doc.categories)
     }
