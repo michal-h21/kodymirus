@@ -76,9 +76,11 @@ function template.index(doc)
     title = doc.title,
     styles = doc.styles,
     contents = article {
+      h.h1{doc.title},
       map(function(v)
         return article {
-          h.h1{ h.a {href=v.relative_filepath, v.title }}
+          h.h1{ h.a {href=v.relative_filepath, v.title }},
+          v.abstract
         }
       end, doc.items)
     }
