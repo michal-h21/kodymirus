@@ -7,6 +7,7 @@ return {
   },
   site_url = "https://www.kodymirus.cz",
   site_title = "Kodymirus",
+  site_author = "Michal Hoftich",
   site_description = "Kodymirus blog", 
   path = "build",
   output_dir = "www"
