@@ -90,7 +90,7 @@ function template.categoryarchive(doc)
     styles = doc.styles,
     contents = article {
       h.h1 {doc.title},
-      h.details{open="",
+      h.details{
         h.summary {"Table of contents"},
         h.nav{
           map(function(category)
