@@ -34,12 +34,14 @@ local take = transducers.take
 local site_url = config.site_url 
 local site_title = config.site_title 
 local site_description = config.site_description  
+local site_author = config.site_author
 -- number of items in the RSS feed
 local rss_count = config.rss_count or 20
 -- number of items on the index page
 local index_count = config.index_count or 5
 local blog_path = arg[1] or config.path or "build"
 local output_dir = config.output_dir or "www"
+local uncategorized = config.uncategorized or "uncategorized"
 
 local paths = lettersmith.paths(blog_path)
 
@@ -76,6 +78,7 @@ local nonhtml_filter = make_negative_filter("html$")
 local add_defaults = make_transformer(function(doc)
   -- potentially add default variables
   doc.menu = config.menu
+  doc.author = doc.author or site_author
   return doc
 end)
 
@@ -172,6 +175,51 @@ local index_builder = main_archive_builder("index.html", "index", index_count)
 local archive = main_archive_builder("archive.html", "index")
 
 
+-- process posts and save them under categories
+local categories = function()
+  return function(iter, ...)
+    -- local items =  {}
+    local categories = {}
+
+    local items = into(take_items(function() return true end),iter, ...)
+    for _, x in ipairs(items) do
+      local category = x.category or uncategorized 
+      local curr = categories[category] or {}
+      table.insert(curr, x)
+      categories[category] = curr
+    end
+    return coroutine.wrap(function()
+      for x, y in pairs(categories) do
+        coroutine.yield {category = x, items = y}
+      end
+    end)
+  end
+end
+
+local categories_archive = function(title, filename, template)
+  -- generate page with list of all posts by category
+  return function(iter, ...)
+    -- iterator contains particular categories
+    local categories = {}
+    -- fetch all categories
+    local items = into(take_items(function() return true end),iter, ...)
+    for i, x in ipairs(items) do
+      local category = x.category or uncategorized
+      categories[i] = {name = category, items = x.items}
+    end
+    -- sort categories alphabetically
+    table.sort(categories, function(a,b) return a.name < b.name end)
+    return wrap_in_iter {relative_filepath = filename, title = title, categories = categories, template = template}
+  end
+end
+
+local categories_archive_builder = comp(
+  apply_template,
+  categories_archive("Archive by category", "category-archive.html", "categoryarchive"),
+  categories(),
+  archives,
+  lettersmith.docs
+)
 
 
 local categories_to_rss = function(count)
@@ -186,25 +234,6 @@ end
 
 
 
-local categories = function()
-  return function(iter, ...)
-    -- local items =  {}
-    local categories = {}
-
-    local items = into(take_items(function() return true end),iter, ...)
-    for _, x in ipairs(items) do
-      local category = x.category or "uncatagorized"
-      local curr = categories[category] or {}
-      table.insert(curr, x)
-      categories[category] = curr
-    end
-    return coroutine.wrap(function()
-      for x, y in pairs(categories) do
-        coroutine.yield {category = x, items = y}
-      end
-    end)
-  end
-end
 
 
 local main_rss = function()
@@ -234,11 +263,14 @@ local category_rss_build = comp(
 )
 
 
+
+
 -- build pages
 lettersmith.build(
   output_dir, -- output dir
   index_builder(paths),
   archive(paths),
+  categories_archive_builder(paths),
   builder(paths), -- process all files
   html_builder(paths), -- process only html files
   category_rss_build(paths),

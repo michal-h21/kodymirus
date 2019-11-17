@@ -1,8 +1,17 @@
 local h5tk = require "h5tk"
+
 local template = {}
 
 local h = h5tk.init(true)
 local html, head, body, title, link, article = h.html, h.head, h.body, h.title, h.link, h.article
+
+local function map(func, tbl)
+  local newtbl = {}
+  for i,v in pairs(tbl) do
+    newtbl[i] = func(v)
+  end
+  return newtbl
+end
 
 local function styles(s)
   local s = s or {}
@@ -64,7 +73,6 @@ function template.index(doc)
       function()
         local t = {}
         for k,v in ipairs(doc.items) do
-          print(v.title)
           t[#t+1 ] = article {
             h.h1{ h.a {href=v.relative_filepath, v.title }}
 
@@ -75,4 +83,25 @@ function template.index(doc)
     }
   }
 end
+
+function template.categoryarchive(doc)
+  return root {
+    title = doc.title,
+    styles = doc.styles,
+    contents = article {
+      map(function(category)
+        return article {
+          h.h1 {category.name}, 
+          h.ul{
+            map(function(item)
+              return h.li {h.a {href=item.relative_filepath, item.title}}
+            end, category.items)
+          }
+        }
+      end, doc.categories)
+    }
+  }
+end
+
+
 return template
