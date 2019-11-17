@@ -100,7 +100,7 @@ function template.categoryarchive(doc)
       },
       map(function(category)
         return article {
-          h.h1 {id=category.name, category.name}, 
+          h.h1 {id=category.name, category.name , h.a{href=category.name.. ".rss", h.img{src="rss.svg", style="width:1em"}}}, 
           map(archive_item, category.items)
         }
       end, doc.categories)

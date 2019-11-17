@@ -8,3 +8,4 @@ test:
 	mkdir -p $(test_path)
 	lua test/make_test_posts.lua
 	lua src/blog.lua $(test_path)
+	cp test/rss.svg www/
