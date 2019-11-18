@@ -1,5 +1,6 @@
 local h5tk = require "h5tk"
 local os = require "os"
+local date = require "date"
 
 local template = {}
 
@@ -12,6 +13,16 @@ local function map(func, tbl)
     newtbl[i] = func(v)
   end
   return newtbl
+end
+
+local function human_date(time)
+  local d = date(time)
+  -- format as month-name day, year
+  return d:fmt("%B %d, %Y"):gsub(" 0", " ") -- days smaller than 10 contain leading zero, delete it
+end
+
+local function archive_item(item)
+  return h.p{os.date( "%Y-%m-%d", item.time ), h.a {href=item.relative_filepath, item.title}}
 end
 
 local function styles(s)
@@ -33,84 +44,72 @@ function root(doc)
       h.style{"body{max-width:60em;margin:0 auto;}"}
     },
     body {
-      doc.contents
+      h.header{h.nav{
+        role="navigation"},
+        map(function(menuitem)
+          return h.a{href=menuitem.href, menuitem.title}
+        end,doc.menu)
+      },
+      h.main{doc.contents},
+      h.footer{h.p{"Hello footer"}}
     }
   }))
 end
 
+
 function template.post(doc)
-  -- return "<!DOCTYPE html>\n" .. (h.emit(
-  -- html { lang="en", 
-  --   head {
-  --     h.meta {charset="utf-8"},
-  --     title { doc.title },
-  --     (styles(doc.styles))
-  --   },
-  --   body {
-      -- article {
-      --   h.h1 {doc.title},
-      --   h.section{class="abstract", doc.abstract},
-      --   doc.contents
-      -- }
-    -- }
-  -- }
-  -- ))
-  return root {
-    title = doc.title,
-    styles = doc.styles,
-    contents = article {class="h-card",
-        h.h1 {class="p-name", doc.title},
+  doc.contents = article {
+    class="h-card",
+    h.header{
+      h.h1 {class="p-name", doc.title},
+      h.p {
+        "Published by ", h.a{class="p-author h-card", doc.author}, 
         -- h5tk doesn't know the <time> element, so it is necessary to use it in string
-        h.p {"Published by ", h.a{class="p-author h-card", doc.author}, ' on <time class="dt-published" datetime="' .. doc.date ..'">'..os.date("%x", doc.time) ..'</time>'},
-        h.section{class="abstract", role="doc-abstract", doc.abstract},
-        doc.contents
-      }
+        ' on <time class="dt-published" datetime="' .. doc.date ..'">'..human_date( doc.time) ..'</time>', 
+        "in " , h.a{href="/category-archive.html#" .. doc.category, doc.category}
+      },
+    },
+    h.section{class="abstract p-summary", role="doc-abstract", doc.abstract},
+    doc.contents
   }
-
+  return root(doc)
 end
 
-local function archive_item(item)
-  return h.p{os.date( "%Y-%m-%d", item.time ), h.a {href=item.relative_filepath, item.title}}
-end
 
 function template.index(doc)
-  return root {
-    title = doc.title,
-    styles = doc.styles,
-    contents = article {
-      h.h1{doc.title},
-      map(function(v)
-        return article {
-          h.h1{ h.a {href=v.relative_filepath, v.title }},
-          v.abstract
-        }
-      end, doc.items)
-    }
+  doc.contents = article {
+    h.h1{doc.title},
+    map(function(v)
+      return article {
+        h.h1{ h.a {href=v.relative_filepath, v.title }},
+        v.abstract
+      }
+    end, doc.items),
+    h.p{h.a{href="archive.html", "Archive"}}
   }
+  return root(doc)
 end
 
 function template.categoryarchive(doc)
-  return root {
-    title = doc.title,
-    styles = doc.styles,
-    contents = article {
-      h.h1 {doc.title},
-      h.details{
-        h.summary {"Table of contents"},
-        h.nav{
-          map(function(category)
-            return h.div {h.a{href="#" .. category.name, category.name}}
-          end, doc.categories)
-        }
-      },
-      map(function(category)
-        return article {
-          h.h1 {id=category.name, category.name , h.a{href=category.name.. ".rss", h.img{src="rss.svg", style="width:1em"}}}, 
-          map(archive_item, category.items)
-        }
-      end, doc.categories)
-    }
+  doc.contents = article {
+    h.h1 {doc.title},
+    h.details{
+      h.summary {"Table of contents"},
+      h.nav{
+        map(function(category)
+          return h.div {h.a{href="#" .. category.name, category.name}}
+        end, doc.categories)
+      }
+    },
+    map(function(category)
+      return article {
+        h.h1 {id=category.name, category.name , h.a{href=category.name.. ".rss", h.img{src="rss.svg", style="width:0.8rem"}}}, 
+        map(archive_item, category.items)
+      }
+    end, doc.categories)
   }
+  return root(doc)
+ 
 end
 
 
