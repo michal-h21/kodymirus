@@ -60,7 +60,7 @@ function template.post(doc)
     styles = doc.styles,
     contents = article {class="h-card",
         h.h1 {class="p-name", doc.title},
-        -- h5tk doesn't know date tag
+        -- h5tk doesn't know the <time> element, so it is necessary to use it in string
         h.p {"Published by ", h.a{class="p-author h-card", doc.author}, ' on <time class="dt-published" datetime="' .. doc.date ..'">'..os.date("%x", doc.time) ..'</time>'},
         h.section{class="abstract", role="doc-abstract", doc.abstract},
         doc.contents
