@@ -38,7 +38,7 @@ function root(doc)
   }))
 end
 
-function template.base(doc)
+function template.post(doc)
   -- return "<!DOCTYPE html>\n" .. (h.emit(
   -- html { lang="en", 
   --   head {
@@ -58,9 +58,11 @@ function template.base(doc)
   return root {
     title = doc.title,
     styles = doc.styles,
-    contents = article {
-        h.h1 {doc.title},
-        h.section{class="abstract", doc.abstract},
+    contents = article {class="h-card",
+        h.h1 {class="p-name", doc.title},
+        -- h5tk doesn't know date tag
+        h.p {"Published by ", h.a{class="p-author h-card", doc.author}, ' on <time class="dt-published" datetime="' .. doc.date ..'">'..os.date("%x", doc.time) ..'</time>'},
+        h.section{class="abstract", role="doc-abstract", doc.abstract},
         doc.contents
       }
   }
