@@ -179,7 +179,7 @@ local main_archive_builder = function(filename, template, count)
 end
 
 local index_builder = main_archive_builder("index.html", "index", index_count)
-local archive = main_archive_builder("archive.html", "index")
+local archive = main_archive_builder("archive.html", "archive")
 
 
 -- process posts and save them under categories
