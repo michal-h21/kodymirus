@@ -118,9 +118,9 @@ end
 
 function template.categoryarchive(doc)
   -- save category feeds
-  for _, c in ipairs(doc.categories) do
-    c.feed = c.name .. ".rss"
-  end
+  map(function(c) 
+    c.feed = c.name .. ".rss" 
+  end, doc.categories)
   doc.contents = article {
     h.h1 {doc.title},
     h.details{
@@ -131,12 +131,7 @@ function template.categoryarchive(doc)
         end, doc.categories)
       }
     },
-    map(print_archive_items--function(category)
-      -- return article {
-      --   h.h1 {id=category.name, category.name , h.a{href=category.name.. ".rss", h.img{src="rss.svg", style="width:0.8rem"}}}, 
-      --   map(archive_item, category.items)
-      -- }
-    -- end, 
+    map(print_archive_items
     ,doc.categories)
   }
   return root(doc)
