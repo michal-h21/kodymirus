@@ -10,7 +10,7 @@ local merge = require("lettersmith.table_utils").merge
 local transform = lazy.transform
 local transformer = lazy.transformer
 local templates = require "template"
-local base_template = templates.base
+local base_template = templates.post -- blog entry template
 local rss = require "lettersmith.rss"
 local rss_table = require "rss".rss_table
 local render_permalinks = require "lettersmith.permalinks".render_permalinks
@@ -79,7 +79,10 @@ local add_defaults = make_transformer(function(doc)
   -- potentially add default variables
   doc.menu = config.menu
   doc.styles = doc.styles or {}
-  table.insert(doc.styles, "https://unpkg.com/basic-css-typography-reset@1.0.0/typography.min.css")
+  if #doc.styles  == 0 then
+    -- add default style
+    table.insert(doc.styles, "/test.css")
+  end
   doc.author = doc.author or site_author
   return doc
 end)
