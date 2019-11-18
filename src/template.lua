@@ -90,7 +90,37 @@ function template.index(doc)
   return root(doc)
 end
 
+local function print_archive_items(doc)
+  return h.section{
+    class="h-feed",
+    h.h2{id=doc.name, doc.name, h.a{href=doc.feed, h.img{src="rss.svg", style="width:0.8rem"}}},
+    map(function(item)
+      return h.div{
+        class="h-entry",
+        h.p{os.date( "%Y-%m-%d", item.time ), h.a {href=item.relative_filepath, item.title}}
+      }
+    end, doc.items)
+  }
+end
+        
+
+
+function template.archive(doc)
+  doc.name="Archive"
+  doc.feed="feed.rss"
+  doc.contents = article {
+    h.h1{doc.title},
+    h.aside{h.p{h.a{href="category-archive.html", "Category archive"}}},
+    print_archive_items(doc)
+  }
+  return root(doc)
+end
+
 function template.categoryarchive(doc)
+  -- save category feeds
+  for _, c in ipairs(doc.categories) do
+    c.feed = c.name .. ".rss"
+  end
   doc.contents = article {
     h.h1 {doc.title},
     h.details{
@@ -101,12 +131,13 @@ function template.categoryarchive(doc)
         end, doc.categories)
       }
     },
-    map(function(category)
-      return article {
-        h.h1 {id=category.name, category.name , h.a{href=category.name.. ".rss", h.img{src="rss.svg", style="width:0.8rem"}}}, 
-        map(archive_item, category.items)
-      }
-    end, doc.categories)
+    map(print_archive_items--function(category)
+      -- return article {
+      --   h.h1 {id=category.name, category.name , h.a{href=category.name.. ".rss", h.img{src="rss.svg", style="width:0.8rem"}}}, 
+      --   map(archive_item, category.items)
+      -- }
+    -- end, 
+    ,doc.categories)
   }
   return root(doc)
  
