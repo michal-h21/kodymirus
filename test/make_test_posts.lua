@@ -40,6 +40,8 @@ abstract: '<p>hello abstract</p>'
 time: %i
 date: '%s'
 category: '%s'
+styles: 
+  - '/test.css'
 ---
 
 ]], table.concat(new_name, " "), new_time,  date, category)
