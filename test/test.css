@@ -1,6 +1,10 @@
+/* Variables */
+
+
 /* Mini CSS reset and basic typography  */
 
 * {box-sizing: border-box}
+
 
 html {
     -ms-text-size-adjust: 100%;
@@ -9,15 +13,17 @@ html {
 
 /* General settings */
 
+
 body {
-    margin: 0;
     font: 1em/1.6 system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Droid Sans, Helvetica Neue, Fira Sans, sans-serif;
     font-weight: 400;
     font-style: normal;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
-    color: #111
+    color: #111;
 }
+
+
 img, iframe {border: none}
 
  /* Headlines */
@@ -53,16 +59,30 @@ th, td {text-align: left;vertical-align: top}
  * font-size / ( number of viewport units / 100 )
  * it means 16 / (1.5/100)
  */
-@media (min-width: 1200px){
+@media (min-width: 1067px){
   :root {
     font-size: 1.5vw;
   }
 }
 
-/* Maximal font size should be 24px, so stop font scalling at some point (24 / (1.5/100)) */
+/* Maximal font size should be 20px, so stop font scalling at some point (20 / (1.5/100)) */
 
-@media (min-width: 1500px){
+@media (min-width: 1333px){
   :root {
     font-size: 20px;
   }
 }
+
+/* tips from https://www.freecodecamp.org/news/how-to-recreate-mediums-article-layout-with-css-grid-b4608792bad1/ */
+
+@media (min-width:37em){
+  body{
+     display: grid;  
+     grid-template-columns: 1fr 1fr 1em 35em 1em 1fr 1fr ;  
+  }
+  body > * {  
+        grid-column: 4;  
+  }
+
+}
+

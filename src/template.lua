@@ -39,9 +39,9 @@ function root(doc)
   html { lang="en", 
     head {
       h.meta {charset="utf-8"},
+      h.meta {name="viewport", content="width=device-width, initial-scale=1"},
       title { doc.title },
       (styles(doc.styles)),
-      h.style{"body{max-width:60em;margin:0 auto;}"}
     },
     body {
       h.header{h.nav{
@@ -70,7 +70,10 @@ function template.post(doc)
       },
     },
     h.section{class="abstract p-summary", role="doc-abstract", doc.abstract},
-    doc.contents
+    h.div{
+      class="e-content",
+      doc.contents
+    }
   }
   return root(doc)
 end
