@@ -40,6 +40,7 @@ function root(doc)
     head {
       h.meta {charset="utf-8"},
       h.meta {name="viewport", content="width=device-width, initial-scale=1"},
+      h.meta {property="og:type", content=(doc.contenttype or "website")},
       title { doc.title },
       (styles(doc.styles)),
     },
@@ -58,20 +59,24 @@ end
 
 
 function template.post(doc)
+  doc.contenttype = "article"
   doc.contents = article {
     class="h-card",
+    itemscope="",
+    itemptype="https://schema.org/Article",
     h.header{
-      h.h1 {class="p-name", doc.title},
+      h.h1 {class="p-name", itemprop="name", doc.title},
       h.p {
-        "Published by ", h.a{class="p-author h-card", doc.author}, 
+        "Published by ", h.a{itemprop="author",class="p-author h-card", doc.author}, 
         -- h5tk doesn't know the <time> element, so it is necessary to use it in string
-        ' on <time class="dt-published" datetime="' .. doc.date ..'">'..human_date( doc.time) ..'</time>', 
-        "in " , h.a{href="/category-archive.html#" .. doc.category, doc.category}
+        ' on <time itemprop="datePublished" class="dt-published" datetime="' .. doc.date ..'">'..human_date( doc.time) ..'</time>', 
+        "in " , h.a{itemprop="about", href="/category-archive.html#" .. doc.category, doc.category}
       },
     },
-    h.section{class="abstract p-summary", role="doc-abstract", doc.abstract},
+    h.section{class="abstract p-summary", itemprop="abstract", role="doc-abstract", doc.abstract},
     h.div{
       class="e-content",
+      itemprop="articleBody",
       doc.contents
     }
   }
