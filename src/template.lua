@@ -41,7 +41,9 @@ function root(doc)
       h.meta {charset="utf-8"},
       h.meta {name="viewport", content="width=device-width, initial-scale=1"},
       h.meta {property="og:type", content=(doc.contenttype or "website")},
-      title { doc.title },
+      h.meta {property="og:title", content=doc.title},
+      h.meta {property="og:url", content=doc.site_url .. "/" .. doc.relative_filepath},
+      title { doc.title .. " – ".. doc.site_title },
       (styles(doc.styles)),
     },
     body {

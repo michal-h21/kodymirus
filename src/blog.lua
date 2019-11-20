@@ -79,6 +79,7 @@ local add_defaults = make_transformer(function(doc)
   -- potentially add default variables
   doc.menu = config.menu
   doc.site_url = site_url
+  doc.site_title = site_title
   doc.styles = doc.styles or {}
   if #doc.styles  == 0 then
     -- add default style
