@@ -35,6 +35,7 @@ local site_url = config.site_url
 local site_title = config.site_title 
 local site_description = config.site_description  
 local site_author = config.site_author
+local author_profile = config.author_profile
 -- number of items in the RSS feed
 local rss_count = config.rss_count or 20
 -- number of items on the index page
@@ -42,6 +43,8 @@ local index_count = config.index_count or 5
 local blog_path = arg[1] or config.path or "build"
 local output_dir = config.output_dir or "www"
 local uncategorized = config.uncategorized or "uncategorized"
+local language = config.language or "en"
+local about_page = config.about or "/now"
 
 local paths = lettersmith.paths(blog_path)
 
@@ -80,12 +83,16 @@ local add_defaults = make_transformer(function(doc)
   doc.menu = config.menu
   doc.site_url = site_url
   doc.site_title = site_title
+  doc.author = doc.author or site_author
   doc.styles = doc.styles or {}
   if #doc.styles  == 0 then
     -- add default style
     table.insert(doc.styles, "/test.css")
   end
   doc.author = doc.author or site_author
+  doc.author_profile = author_profile
+  doc.about_page = about_page
+  doc.language = language
   return doc
 end)
 

@@ -34,15 +34,37 @@ local function styles(s)
   return t
 end
 
+local function metaifexitst(key, value, name)
+  local property = name and "name" or "property"
+  if value then return h.meta{[property] = key, content=value } end
+end
+
+local function dublincore(field, value)
+  return h.meta {name="DCTERMS."..field, content=value}
+end
+
+local function opengraph(property, content)
+  return h.meta {property="og:" .. property, content=content}
+end
+
+
 function root(doc)
+  local published_date = os.date("%Y-%m-%d",doc.time)
   return "<!DOCTYPE html>\n" .. (h.emit(
-  html { lang="en", 
+  html { lang=doc.language, 
     head {
       h.meta {charset="utf-8"},
       h.meta {name="viewport", content="width=device-width, initial-scale=1"},
       h.meta {property="og:type", content=(doc.contenttype or "website")},
       h.meta {property="og:title", content=doc.title},
       h.meta {property="og:url", content=doc.site_url .. "/" .. doc.relative_filepath},
+      h.meta {property="og:article:author", content=doc.author_profile},
+      h.meta {property="og:article:published", content=published_date},
+      opengraph("sitename", doc.site_title),
+      dublincore("creator", doc.author),
+      dublincore("language", doc.language),
+      dublincore("title", doc.title),
+      dublincore("date", published_date),
       title { doc.title .. " – ".. doc.site_title },
       (styles(doc.styles)),
     },
@@ -65,11 +87,11 @@ function template.post(doc)
   doc.contents = article {
     class="h-card",
     itemscope="",
-    itemptype="https://schema.org/Article",
+    itemtype="https://schema.org/Article",
     h.header{
       h.h1 {class="p-name", itemprop="name", doc.title},
       h.p {
-        "Published by ", h.a{itemprop="author",class="p-author h-card", doc.author}, 
+        "Published by ", h.a{itemprop="author",href=doc.about_page,class="p-author h-card", doc.author}, 
         -- h5tk doesn't know the <time> element, so it is necessary to use it in string
         ' on <time itemprop="datePublished" class="dt-published" datetime="' .. doc.date ..'">'..human_date( doc.time) ..'</time>', 
         "in " , h.a{itemprop="about", href="/category-archive.html#" .. doc.category, doc.category}

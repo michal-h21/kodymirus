@@ -11,5 +11,8 @@ return {
   site_author = "Michal Hoftich",
   site_description = "Kodymirus blog", 
   path = "build",
-  output_dir = "www"
+  output_dir = "www",
+  author_profile = "https://github.com/michal-h21",
+  language="en",
+  about="/now" -- address of the about page
 }
