@@ -40,6 +40,10 @@ local function metaifexitst(key, value, name)
 end
 
 local function dublincore(field, value)
+  return h.meta {name="DC."..field, content=value}
+end
+
+local function dublincoreterms(field, value)
   return h.meta {name="DCTERMS."..field, content=value}
 end
 
@@ -61,10 +65,14 @@ function root(doc)
       h.meta {property="og:article:author", content=doc.author_profile},
       h.meta {property="og:article:published", content=published_date},
       opengraph("sitename", doc.site_title),
+      h.link{rel="schema.DC", href="http://purl.org/dc/elements/1.1/"},
+      h.link{rel="schema.DCTERMS", href="http://purl.org/dc/terms/"},
       dublincore("creator", doc.author),
       dublincore("language", doc.language),
       dublincore("title", doc.title),
+      dublincore("source", doc.site_title),
       dublincore("date", published_date),
+      dublincore("subject", doc.category),
       title { doc.title .. " – ".. doc.site_title },
       (styles(doc.styles)),
     },
