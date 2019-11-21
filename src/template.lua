@@ -54,12 +54,13 @@ end
 
 function root(doc)
   local published_date = os.date("%Y-%m-%d",doc.time)
+  local contenttype = doc.contenttype or "website"
   return "<!DOCTYPE html>\n" .. (h.emit(
   html { lang=doc.language, 
     head {
       h.meta {charset="utf-8"},
       h.meta {name="viewport", content="width=device-width, initial-scale=1"},
-      h.meta {property="og:type", content=(doc.contenttype or "website")},
+      h.meta {property="og:type", content=contenttype},
       h.meta {property="og:title", content=doc.title},
       h.meta {property="og:url", content=doc.site_url .. "/" .. doc.relative_filepath},
       h.meta {property="og:article:author", content=doc.author_profile},
@@ -72,6 +73,8 @@ function root(doc)
       dublincore("title", doc.title),
       dublincore("source", doc.site_title),
       dublincore("date", published_date),
+      dublincore("format", "text/html"),
+      dublincore("type", contenttype),
       dublincore("subject", doc.category),
       title { doc.title .. " – ".. doc.site_title },
       (styles(doc.styles)),
@@ -91,7 +94,7 @@ end
 
 
 function template.post(doc)
-  doc.contenttype = "article"
+  doc.contenttype = "blogposting"
   doc.contents = article {
     class="h-card",
     itemscope="",
