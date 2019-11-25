@@ -55,17 +55,19 @@ end
 function root(doc)
   local published_date = os.date("%Y-%m-%d",doc.time)
   local contenttype = doc.contenttype or "website"
+  local url = doc.site_url .. "/" .. doc.relative_filepath
   return "<!DOCTYPE html>\n" .. (h.emit(
   html { lang=doc.language, 
     head {
       h.meta {charset="utf-8"},
       h.meta {name="viewport", content="width=device-width, initial-scale=1"},
-      h.meta {property="og:type", content=contenttype},
-      h.meta {property="og:title", content=doc.title},
-      h.meta {property="og:url", content=doc.site_url .. "/" .. doc.relative_filepath},
-      h.meta {property="og:article:author", content=doc.author_profile},
-      h.meta {property="og:article:published", content=published_date},
+      opengraph("type", contenttype),
+      opengraph("title", doc.title),
+      opengraph("url", url),
+      opengraph("article:author", doc.author_profile),
+      opengraph("article:published", published_date),
       opengraph("sitename", doc.site_title),
+      -- define dublin core schemas
       h.link{rel="schema.DC", href="http://purl.org/dc/elements/1.1/"},
       h.link{rel="schema.DCTERMS", href="http://purl.org/dc/terms/"},
       dublincore("creator", doc.author),
@@ -75,6 +77,7 @@ function root(doc)
       dublincore("date", published_date),
       dublincore("format", "text/html"),
       dublincore("type", contenttype),
+      dublincore("identifier", url),
       dublincore("subject", doc.category),
       title { doc.title .. " – ".. doc.site_title },
       (styles(doc.styles)),
