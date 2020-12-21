@@ -58,7 +58,7 @@ function root(doc)
   local url = doc.site_url .. "/" .. doc.relative_filepath
   return "<!DOCTYPE html>\n" .. (h.emit(
   html { lang=doc.language, 
-    head {
+    head {prefix="og: http://ogp.me/ns#",
       h.meta {charset="utf-8"},
       h.meta {name="viewport", content="width=device-width, initial-scale=1"},
       opengraph("type", contenttype),
@@ -67,6 +67,12 @@ function root(doc)
       opengraph("article:author", doc.author_profile),
       opengraph("article:published", published_date),
       opengraph("sitename", doc.site_title),
+      -- twitter
+      h.link{rel="me",  href="https://twitter.com/michalh21"},
+      h.meta{name="twitter:creator", content="@michalh21"},
+      -- rss feeds
+      h.link{rel="alternate", type="application/rss+xml", title="Main feed", href=doc.feed},
+      h.link{rel="alternate", type="application/rss+xml", title="Category feed", href=doc.category_feed},
       -- define dublin core schemas
       h.link{rel="schema.DC", href="http://purl.org/dc/elements/1.1/"},
       h.link{rel="schema.DCTERMS", href="http://purl.org/dc/terms/"},
@@ -90,7 +96,7 @@ function root(doc)
         end,doc.menu)
       },
       h.main{doc.contents},
-      h.footer{h.p{"Hello footer"}}
+      h.footer{h.p{"© 2020 <a rel='me' class='h-card' href='https://github.com/michal-h21'>Michal Hoftich</a>"}}
     }
   }))
 end
@@ -99,7 +105,7 @@ end
 function template.post(doc)
   doc.contenttype = "blogposting"
   doc.contents = article {
-    class="h-card",
+    class="h-entry",
     itemscope="",
     itemtype="https://schema.org/Article",
     h.header{
