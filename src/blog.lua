@@ -84,6 +84,9 @@ local add_defaults = make_transformer(function(doc)
   doc.site_url = site_url
   doc.site_title = site_title
   doc.author = doc.author or site_author
+  doc.feed = "feed.rss"
+  doc.category = doc.category or uncategorized
+  doc.category_feed = doc.category .. ".rss"
   doc.styles = doc.styles or {}
   if #doc.styles  == 0 then
     -- add default style
