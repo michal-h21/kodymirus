@@ -21,6 +21,7 @@ body {
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     color: #111;
+    margin: 1em auto;
 }
 
 
@@ -85,4 +86,42 @@ th, td {text-align: left;vertical-align: top}
   }
 
 }
+
+/* ************** */
+/* *** Colors *** */
+/* ************** */
+
+:root {
+--color-background: #fefefe;
+--color-text-default: #242424;
+--color-link-text: #0077aa;
+--color-link-visited: #7d103b;
+--color-link-hover: #0033AA;
+}
+
+/* Support dark mode */
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-background: #142434;
+    --color-text-default: #eeeeee;
+    --color-link-text: #44aaee;
+    --color-link-visited: #68a1ca;
+    --color-link-hover: #66ccff;
+  }
+
+  p{line-height:1.7;}
+}
+
+body{
+  color:var(--color-text-default);
+  background-color: var(--color-background);
+}
+
+a{color:var(--color-link-text);}
+a:visited{color:var(--color-link-visited);}
+a:hover{color:var(--color-link-hover);}
+/* don't highlight links in header as visited */
+header a:visited{color:var(--color-link-text);}
+
+
 
