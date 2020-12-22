@@ -32,19 +32,23 @@ if not url[1] then
 end
 
 -- try to find webmention endpoind in the mentioned page
-local content, msg = curl(url[1])
-if not content then
-  print(msg)
-  print(url[1])
-  os.exit(1)
-end
+for _, u in ipairs(url) do 
+  local content, msg = curl(u)
+  if not content then
+    print(msg)
+    print(u)
+    os.exit(1)
+  end
 
--- this regex starts to be ugly :/
-local endpoint = get_href(content, "rel%s*=%s*[\"'][^\"^']-webmention")
+  -- this regex starts to be ugly :/
+  local endpoint = get_href(content, "rel%s*=%s*[\"'][^\"^']-webmention")
 
-print("Found webmention endpoints")
-for _, url in ipairs(endpoint) do
-  print(url)
+  print("Found webmention endpoints")
+  for _, url in ipairs(endpoint) do
+    print(url)
+    -- send webmention:
+    -- curl -i -d "source=$your_url&target=$target_url" $targets_webmention_endpoint
+  end
 end
 
 
