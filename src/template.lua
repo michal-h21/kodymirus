@@ -69,6 +69,7 @@ function root(doc)
       opengraph("sitename", doc.site_title),
       -- twitter
       h.link{rel="me",  href="https://twitter.com/michalh21"},
+      h.link{rel="me",  href="mailto:michal.h21@gmail.com"},
       h.meta{name="twitter:creator", content="@michalh21"},
       -- rss feeds
       h.link{rel="alternate", type="application/rss+xml", title="Main feed", href=doc.feed},
