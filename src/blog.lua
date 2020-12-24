@@ -16,9 +16,11 @@ local rss_table = require "rss".rss_table
 local render_permalinks = require "lettersmith.permalinks".render_permalinks
 local wrap_in_iter = require("lettersmith.plugin_utils").wrap_in_iter
 local comp = require("lettersmith.transducers").comp
-local archive = require "archive".archive
+-- it seems that this isn't used anymore:
+-- local archive = require "archive".archive
 local config = require "config"
 
+local checksum = require "plc.checksum"
 
 
 
@@ -75,6 +77,8 @@ local post_filter = transformer(filter(function(doc)
 end))
 
 
+
+
 local html_filter = make_filter("html$")
 local nonhtml_filter = make_negative_filter("html$")
 
@@ -111,6 +115,33 @@ local abstract_to_content = make_transformer(function(doc)
   return merge(doc, {contents = newcontent})
 end)
 
+local function save_checksums(iter)
+  local checksum_table = {}
+  return coroutine.wrap(function()
+    -- calculate crc32 for each document
+    for doc in iter do
+      checksum_table[doc.relative_filepath] = doc.checksum
+      coroutine.yield(doc)
+    end
+
+    -- save checksums in tab separate file
+    local filename = config.checksum_file or  "checksums.tsv"
+    local f = io.open(filename, "w")
+    for k,v in pairs(checksum_table) do
+      f:write(k .. "\t" .. v .."\n")
+    end
+    f:close()
+  end)
+end
+      
+
+
+local calc_hash = make_transformer(function(doc)
+  local hash = checksum.crc32(doc.contents)
+  return merge(doc, {checksum = hash})
+end)
+
+
 
 -- transform document iterator into table
 local function take_items(criterium)
@@ -142,6 +173,8 @@ local builder = comp(
 
 local html_builder = comp(
   apply_template,
+  save_checksums, 
+  calc_hash,
   permalinks,
   add_defaults,
   html_filter,
@@ -268,7 +301,8 @@ end
 local make_main_rss = comp(
   categories_to_rss(rss_count),
   main_rss(), -- this make only one category, "feed", which is then saved as feed.rss
-  abstract_to_content, -- don't show full posts
+  -- it is better to show full posts, actually
+  -- abstract_to_content, -- don't show full posts
   archives,
   lettersmith.docs
 )
@@ -276,7 +310,8 @@ local make_main_rss = comp(
 local category_rss_build = comp(
   categories_to_rss(rss_count),
   categories(),
-  abstract_to_content, -- don't show full posts
+  -- it is better to show full posts, actually
+  -- abstract_to_content, -- don't show full posts
   archives,
   lettersmith.docs
 )
