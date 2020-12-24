@@ -72,8 +72,8 @@ function root(doc)
       h.link{rel="me",  href="mailto:michal.h21@gmail.com"},
       h.meta{name="twitter:creator", content="@michalh21"},
       -- rss feeds
-      h.link{rel="alternate", type="application/rss+xml", title="Main feed", href=doc.feed},
-      h.link{rel="alternate", type="application/rss+xml", title="Category feed", href=doc.category_feed},
+      h.link{rel="alternate", type="application/rss+xml", title="Main feed", href="/" .. doc.feed},
+      h.link{rel="alternate", type="application/rss+xml", title="Category feed", href="/" .. doc.category_feed},
       -- define dublin core schemas
       h.link{rel="schema.DC", href="http://purl.org/dc/elements/1.1/"},
       h.link{rel="schema.DCTERMS", href="http://purl.org/dc/terms/"},
