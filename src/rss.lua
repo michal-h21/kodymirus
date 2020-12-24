@@ -8,7 +8,7 @@ local derive_date = docs.derive_date
 local reformat_yyyy_mm_dd = docs.reformat_yyyy_mm_dd
 
 local rss_template_string = [[
-<rss version="2.0"  xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0"  xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
 <channel>
   <title>{{site_title}}</title>
   <link>{{{site_url}}}</link>
@@ -25,7 +25,7 @@ local rss_template_string = [[
     <pubDate>{{pubdate}}</pubDate>
     <guid isPermaLink="false">{{guid}}</guid>
     {{#author}}
-    <author>{{author}}</author>
+    <dc:creator>{{author}}</dc:creator>
     {{/author}}
   </item>
   {{/items}}
