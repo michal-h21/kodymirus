@@ -11,7 +11,8 @@ local transform = lazy.transform
 local transformer = lazy.transformer
 local templates = require "template"
 local base_template = templates.post -- blog entry template
-local rss = require "lettersmith.rss"
+-- we use our own version of the rss library from lettersmith
+-- local rss = require "lettersmith.rss"
 local rss_table = require "rss".rss_table
 local render_permalinks = require "lettersmith.permalinks".render_permalinks
 local wrap_in_iter = require("lettersmith.plugin_utils").wrap_in_iter
