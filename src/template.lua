@@ -147,11 +147,12 @@ function template.index(doc)
     h.h1{doc.title},
     map(function(v)
       return article {
-        h.h2{ h.a {href=v.relative_filepath, v.title }},
-        h.p{os.date( "%Y-%m-%d", v.time )},
+        h.header{
+          h.h2{ h.a {href=v.relative_filepath, v.title }},
+          h.p{h.time{datetime=os.date( "%Y-%m-%d", v.time ),os.date( "%Y-%m-%d", v.time )}}
+        },
         v.abstract,
         h.p {h.a {href=v.relative_filepath, "More"}}
-
       }
     end, doc.items),
     h.p{h.a{href="archive.html", "Archive"}}
