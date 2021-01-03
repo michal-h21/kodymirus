@@ -40,7 +40,7 @@ local function metaifexitst(key, value, name)
 end
 
 local function dublincore(field, value)
-  return h.meta {name="DC."..field, content=value}
+  return h.meta {property="dc:"..field, content=value}
 end
 
 local function dublincoreterms(field, value)
@@ -51,6 +51,10 @@ local function opengraph(property, content)
   return h.meta {property="og:" .. property, content=content}
 end
 
+local function ogarticle(property, content)
+  return h.meta {property="article:" .. property, content=content}
+end
+
 
 function root(doc)
   local published_date = os.date("%Y-%m-%d",doc.time)
@@ -58,15 +62,23 @@ function root(doc)
   local url = doc.site_url .. "/" .. doc.relative_filepath
   return "<!DOCTYPE html>\n" .. (h.emit(
   html { lang=doc.language, 
-    head {prefix="og: http://ogp.me/ns#",
+    head {prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article",
       h.meta {charset="utf-8"},
       h.meta {name="viewport", content="width=device-width, initial-scale=1"},
-      opengraph("type", contenttype),
-      opengraph("title", doc.title),
-      opengraph("url", url),
-      opengraph("article:author", doc.author_profile),
-      opengraph("article:published", published_date),
-      opengraph("sitename", doc.site_title),
+      h.meta {["http-equiv"]="Content-Security-Policy", content="default-src 'self'"},
+      -- opengraph("type", contenttype),
+      -- RDFa should support the following syntax
+      -- see https://webmasters.stackexchange.com/a/106283
+      h.meta{property="dc:title og:title", content=doc.title},
+      h.meta{property="dc:source og:sitename", content=doc.site_title},
+      h.meta{property="dc:date article:published", content=published_date},
+      h.meta{property="dc:identifier dcterm:URI og:url", content=url},
+      h.meta{property="dc:type og:type", content=contenttype},
+      -- opengraph("title", doc.title),
+      -- opengraph("url", url),
+      ogarticle("author", doc.author_profile),
+      -- ogarticle("published", published_date),
+      -- opengraph("sitename", doc.site_title),
       -- twitter
       h.link{rel="me",  href="https://twitter.com/michalh21"},
       h.link{rel="me",  href="mailto:michal.h21@gmail.com"},
@@ -75,16 +87,17 @@ function root(doc)
       h.link{rel="alternate", type="application/rss+xml", title="Main feed", href="/" .. doc.feed},
       h.link{rel="alternate", type="application/rss+xml", title="Category feed", href="/" .. doc.category_feed},
       -- define dublin core schemas
-      h.link{rel="schema.DC", href="http://purl.org/dc/elements/1.1/"},
-      h.link{rel="schema.DCTERMS", href="http://purl.org/dc/terms/"},
+      -- not necessary anymore
+      -- h.link{rel="schema.DC", href="http://purl.org/dc/elements/1.1/"},
+      -- h.link{rel="schema.DCTERMS", href="http://purl.org/dc/terms/"},
       dublincore("creator", doc.author),
       dublincore("language", doc.language),
       dublincore("title", doc.title),
-      dublincore("source", doc.site_title),
-      dublincore("date", published_date),
+      -- dublincore("source", doc.site_title),
+      -- dublincore("date", published_date),
       dublincore("format", "text/html"),
-      dublincore("type", contenttype),
-      dublincore("identifier", url),
+      -- dublincore("type", contenttype),
+      -- dublincore("identifier", url),
       dublincore("subject", doc.category),
       title { doc.title .. " – ".. doc.site_title },
       (styles(doc.styles)),
@@ -134,8 +147,11 @@ function template.index(doc)
     h.h1{doc.title},
     map(function(v)
       return article {
-        h.h1{ h.a {href=v.relative_filepath, v.title }},
-        v.abstract
+        h.h2{ h.a {href=v.relative_filepath, v.title }},
+        h.p{os.date( "%Y-%m-%d", v.time )},
+        v.abstract,
+        h.p {h.a {href=v.relative_filepath, "More"}}
+
       }
     end, doc.items),
     h.p{h.a{href="archive.html", "Archive"}}
