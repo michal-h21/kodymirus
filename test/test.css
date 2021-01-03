@@ -15,13 +15,11 @@ html {
 
 
 body {
-    font: 1em/1.6 system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Droid Sans, Helvetica Neue, Fira Sans, sans-serif;
-    font-weight: 400;
+    font-family: sans-serif;
     font-style: normal;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
-    color: #111;
-    margin: 1em auto;
+    margin: 1ch;
 }
 
 
@@ -29,19 +27,37 @@ img, iframe {border: none}
 
  /* Headlines */
 
-h1,h2,h3,h4,h5,h6 {margin: 0.6em 0; font-weight: normal}
+h2,h3,h4,h5,h6 {
+  /* from https://www.smashingmagazine.com/2020/07/css-techniques-legibility/ */
+  font-size: 1em;
+  line-height: calc(1ex / 0.32);
+  margin: calc(1ex / 0.32) 0;
+}
 
-h1 {font-size: 2.625rem; line-height: 1.2}
+h1 {
+  /* from https://www.smashingmagazine.com/2020/07/css-techniques-legibility/ */
+    font-size: 2rem; 
+    line-height: calc(1ex / 0.42);
+    margin: calc(1ex / 0.42) 0;
+}
 
-h2 {font-size: 1.625rem; line-height: 1.2}
+p, li{
+  /* from https://www.smashingmagazine.com/2020/07/css-techniques-legibility/ */
+  font-size: 1em;
+  line-height: calc(1ex / 0.32);
+  margin: calc(1ex / 0.32) 0;
+}
 
-h3 {font-size: 1.3125rem;line-height: 1.24}
 
-h4 {font-size: 1.1875rem;line-height: 1.23}
+/* h2 {font-size: 1.625rem; line-height: 1.2} */
 
-h5,h6 {font-size: 1rem; font-weight:bold}
+/* h3 {font-size: 1.3125rem;line-height: 1.24} */
 
-table {border-collapse: collapse;border-spacing: 0}
+/* h4 {font-size: 1.1875rem;line-height: 1.23} */
+
+/* h5,h6 {font-size: 1rem; font-weight:bold} */
+
+/* table {border-collapse: collapse;border-spacing: 0} */
 
 th, td {text-align: left;vertical-align: top}
 
@@ -52,34 +68,34 @@ th, td {text-align: left;vertical-align: top}
 /* Font size tricks from https://www.madebymike.com.au/writing/precise-control-responsive-typography/ 
  * The font size will be adjusted to the screen size.
  * */
-:root{
-  font-size: 16px;
-}
+/* :root{ */
+/*   font-size: 16px; */
+/* } */
 
 /* the min width is calculated as:
  * font-size / ( number of viewport units / 100 )
  * it means 16 / (1.5/100)
  */
-@media (min-width: 1067px){
-  :root {
-    font-size: 1.5vw;
-  }
-}
+/* @media (min-width: 1067px){ */
+/*   :root { */
+/*     font-size: 1.5vw; */
+/*   } */
+/* } */
 
 /* Maximal font size should be 20px, so stop font scalling at some point (20 / (1.5/100)) */
 
-@media (min-width: 1333px){
-  :root {
-    font-size: 20px;
-  }
-}
+/* @media (min-width: 1333px){ */
+/*   :root { */
+/*     font-size: 20px; */
+/*   } */
+/* } */
 
 /* tips from https://www.freecodecamp.org/news/how-to-recreate-mediums-article-layout-with-css-grid-b4608792bad1/ */
 
-@media (min-width:37em){
+@media (min-width:67ch){
   body{
      display: grid;  
-     grid-template-columns: 1fr 1fr 1em 35em 1em 1fr 1fr ;  
+     grid-template-columns: 1fr 1fr 1em 65ch 1em 1fr 1fr ;  
   }
   body > * {  
         grid-column: 4;  
@@ -100,7 +116,8 @@ th, td {text-align: left;vertical-align: top}
 }
 
 /* Support dark mode */
-@media (prefers-color-scheme: light) {
+/* @media (prefers-color-scheme: light) { */
+@media (prefers-color-scheme: dark) {
   :root {
     --color-background: #142434;
     --color-text-default: #eeeeee;
@@ -109,7 +126,7 @@ th, td {text-align: left;vertical-align: top}
     --color-link-hover: #66ccff;
   }
 
-  p{line-height:1.7;}
+  /* p{line-height:1.7;} */
 }
 
 body{
@@ -122,6 +139,4 @@ a:visited{color:var(--color-link-visited);}
 a:hover{color:var(--color-link-hover);}
 /* don't highlight links in header as visited */
 header a:visited{color:var(--color-link-text);}
-
-
 
