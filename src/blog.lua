@@ -14,6 +14,7 @@ local base_template = templates.post -- blog entry template
 -- we use our own version of the rss library from lettersmith
 -- local rss = require "lettersmith.rss"
 local rss_table = require "rss".rss_table
+local generate_atom = require "atom".generate_atom
 local render_permalinks = require "lettersmith.permalinks".render_permalinks
 local wrap_in_iter = require("lettersmith.plugin_utils").wrap_in_iter
 local comp = require("lettersmith.transducers").comp
@@ -89,7 +90,8 @@ local add_defaults = make_transformer(function(doc)
   doc.site_url = site_url
   doc.site_title = site_title
   doc.author = doc.author or site_author
-  doc.feed = "feed.rss"
+  -- doc.feed = "feed.rss"
+  doc.feed = "atom.xml"
   doc.layout = doc.layout or "page"
   doc.category = doc.category or uncategorized
   doc.category_feed = doc.category .. ".rss"
@@ -278,10 +280,11 @@ local categories_archive_builder = comp(
 
 local categories_to_rss = function(count)
   return transformer(map(function(doc)
-    local feed_name = doc.category ..".rss"
+    local feed_name = doc.category ..".xml"
     return merge(doc, {
       relative_filepath = feed_name,
-      contents = rss_table(doc.items, feed_name, site_url, site_title,site_description,  count)
+      -- contents = rss_table(doc.items, feed_name, site_url, site_title,site_description,  count)
+      contents = generate_atom(doc.items, feed_name, site_url, site_title,site_description,  count, site_author, config.site_author_email )
     })
   end))
 end
