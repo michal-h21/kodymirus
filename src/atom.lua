@@ -32,7 +32,7 @@ local atom_template_string = [[
   <link href="{{{site_url}}}" />
   <link href="{{{feed_url}}}" rel="self" />
   <updated>{{feed_updated}}</updated>
-  <id>{{{site_url}}}</id>
+  <id>{{{site_id}}}</id>
   <author>
     <name>{{author_name}}</name>
     {{#author_email}}<email>{{author_email}}</email>{{/author_email}}
@@ -88,44 +88,6 @@ local function to_atom_entry_from_doc(doc, root_url_string)
   }
 end
 
-local function generate_atom_2(relative_filepath, site_url, site_title, site_description, author_name, author_email)
-  -- this is vibe coded version, which doesn't work at all
-  local function to_atom_entry(doc)
-    return to_atom_entry_from_doc(doc, site_url)
-  end
-
-  local take_20_atom_entries = comp(take(20), map(to_atom_entry))
-
-  return function(iter, ...)
-    local items = into(take_20_atom_entries, iter, ...)
-
-    local feed_url = site_url .. "/" .. relative_filepath
-    local feed_updated
-    if #items > 0 then
-      feed_updated = items[1].updated
-    else
-      feed_updated = to_iso8601(os.time())
-    end
-
-    local contents = render_feed({
-      site_url = site_url,
-      site_title = site_title,
-      site_description = site_description,
-      feed_url = feed_url,
-      feed_updated = feed_updated,
-      author_name = author_name or "Unknown",
-      author_email = author_email,
-      items = items
-    })
-
-    return wrap_in_iter({
-      date = feed_updated,
-      contents = contents,
-      relative_filepath = relative_filepath
-    })
-  end
-end
-
 local function to_rss_item_from_doc(doc, root_url_string)
   local title = doc.title
   local contents = doc.contents
@@ -134,8 +96,11 @@ local function to_rss_item_from_doc(doc, root_url_string)
   -- Reformat doc date as RFC 1123, per RSS spec
   -- http://tools.ietf.org/html/rfc1123.html
   local pubdate = 
-    reformat_yyyy_mm_dd(derive_date(doc), "!%a, %d %b %Y %H:%M:%S GMT")
-  print("pubdate in item", pubdate)
+    reformat_yyyy_mm_dd(derive_date(doc), "%Y-%m-%dT%H:%M:%S.00Z")
+  local updated = pubdate
+  if doc.updated then
+    updated = reformat_yyyy_mm_dd(doc.updated)
+  end
 
   -- Create absolute url from root URL and relative path.
   local url = root_url_string:gsub("/$", "") .. "/" .. doc.relative_filepath:gsub("^/", "")
@@ -149,6 +114,7 @@ local function to_rss_item_from_doc(doc, root_url_string)
     url = pretty_url,
     contents = contents,
     pubdate = pubdate,
+    updated = updated,
     author = author,
     guid = guid
   }
@@ -171,12 +137,13 @@ local function generate_atom(items, relative_filepath, site_url, site_title, sit
   else
     feed_updated = to_iso8601(os.time())
   end
-  print("Feed updated:", feed_updated)
+  -- print("Feed updated:", feed_updated, site_url)
   local feed_url = site_url .. "/" .. relative_filepath
   local context_table = {
     site_title = site_title,
     site_description = site_description,
     site_url = site_url,
+    site_id = (site_url .. "/"):gsub("[%/]+$", "/"),
     feed_url = feed_url,
     feed_updated = feed_updated,
     author_name = author_name or "Unknown",
