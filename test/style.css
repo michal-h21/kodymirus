@@ -4,11 +4,16 @@
   --foreground-color: #0c0c0c;
   --background-color: #fcfcfc;
   --hover-color: #444444;
+  --scale-factor: calc(16px / 1rem);
 }
+
 
 h1,h2,h3,h4,nav ul{margin:0;}
 
 body{
+  /* idea from https://matthiasott.com/notes/compressed-fluid-typography */
+  font-size: clamp(1rem, 0.6522rem + 1.7391vw, 2rem);
+  font-size: clamp( 1rem, 1rem + (3vw * var(--scale-factor)), 3rem);
   max-width:72ch;
   margin: 1ch auto;
   padding: 1ch;
