@@ -98,7 +98,7 @@ local add_defaults = make_transformer(function(doc)
   doc.styles = doc.styles or {}
   if #doc.styles  == 0 then
     -- add default style
-    table.insert(doc.styles, "/test.css")
+    table.insert(doc.styles, "/style.css")
   end
   doc.author = doc.author or site_author
   doc.author_profile = author_profile
