@@ -96,10 +96,10 @@ local add_defaults = make_transformer(function(doc)
   doc.category = doc.category or uncategorized
   doc.category_feed = doc.category .. ".rss"
   doc.styles = doc.styles or {}
-  if #doc.styles  == 0 then
+  -- if #doc.styles  == 0 then
     -- add default style
     table.insert(doc.styles, "/style.css")
-  end
+  -- end
   doc.author = doc.author or site_author
   doc.author_profile = author_profile
   doc.about_page = about_page

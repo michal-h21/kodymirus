@@ -66,6 +66,8 @@ function root(doc)
       h.meta {charset="utf-8"},
       h.meta {name="viewport", content="width=device-width, initial-scale=1"},
       h.meta {["http-equiv"]="Content-Security-Policy", content="default-src 'self'"},
+      h.meta {name="google-site-verification", content="EsWY8xJLGY7SwK9eqJkeqjjGccgwDUqIsEcG2J_ITmE"},
+
       -- opengraph("type", contenttype),
       -- RDFa should support the following syntax
       -- see https://webmasters.stackexchange.com/a/106283
@@ -82,6 +84,8 @@ function root(doc)
       -- twitter
       h.link{rel="me",  href="https://twitter.com/michalh21"},
       h.link{rel="me",  href="mailto:michal.h21@gmail.com"},
+      h.link{ rel="authorization_endpoint", href="https://indieauth.com/auth"},
+
       h.meta{name="twitter:creator", content="@michalh21"},
       -- rss feeds
       h.link{rel="alternate", type="application/rss+xml", title="Main feed", href="/" .. doc.feed},
@@ -103,14 +107,17 @@ function root(doc)
       (styles(doc.styles)),
     },
     body {
-      h.header{h.nav{
-        role="navigation"},
+      h.header{
+        h.h1{id="home", h.a{href="/", doc.site_title}},
+        h.nav{
+        role="navigation",["aria-label"]="Main navigation",
         map(function(menuitem)
           return h.a{href=menuitem.href, menuitem.title}
         end,doc.menu)
       },
+      },
       h.main{doc.contents},
-      h.footer{h.p{"© 2020 <a rel='me' class='h-card' href='https://github.com/michal-h21'>Michal Hoftich</a>"}}
+      h.footer{h.p{"© 2025 <a rel='me' class='h-card' href='https://github.com/michal-h21'>Michal Hoftich</a>"}}
     }
   }))
 end
@@ -123,7 +130,7 @@ function template.post(doc)
     itemscope="",
     itemtype="https://schema.org/Article",
     h.header{
-      h.h1 {class="p-name", itemprop="name", doc.title},
+      h.h2 {class="p-name", itemprop="name", doc.title},
       h.p {
         "Published by ", h.a{itemprop="author",href=doc.about_page,class="p-author h-card", doc.author}, 
         -- h5tk doesn't know the <time> element, so it is necessary to use it in string
@@ -144,7 +151,7 @@ end
 
 function template.index(doc)
   doc.contents = article {
-    h.h1{doc.title},
+    -- h.h1{doc.title},
     map(function(v)
       return article {
         h.header{
