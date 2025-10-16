@@ -45,12 +45,14 @@ local rss_count = config.rss_count or 20
 -- number of items on the index page
 local index_count = config.index_count or 5
 local blog_path = arg[1] or config.path or "build"
+local pages_path = config.pages_path or "pages"
 local output_dir = config.output_dir or "www"
 local uncategorized = config.uncategorized or "uncategorized"
 local language = config.language or "en"
 local about_page = config.about or "/now"
 
 local paths = lettersmith.paths(blog_path)
+local pages = lettersmith.paths(pages_path)
 
 -- local render_mustache = require("lettersmith.mustache").choose_mustache
 
@@ -100,6 +102,8 @@ local add_defaults = make_transformer(function(doc)
     -- add default style
     table.insert(doc.styles, "/style.css")
   -- end
+  doc.time = doc.time or os.time()
+  doc.date = doc.date or os.date("%Y-%m-%d", doc.time)
   doc.author = doc.author or site_author
   doc.author_profile = author_profile
   doc.about_page = about_page
@@ -180,6 +184,22 @@ local html_builder = comp(
   save_checksums, 
   calc_hash,
   permalinks,
+  add_defaults,
+  html_filter,
+  lettersmith.docs
+)
+
+local use_pages_template = make_transformer(function(doc)
+  -- use page template for pages
+  doc.template = "page"
+  return doc
+end)
+
+-- process static pages inthe pages directory
+-- we don't need to add permalinks here
+local page_builder = comp(
+  apply_template,
+  use_pages_template,
   add_defaults,
   html_filter,
   lettersmith.docs
@@ -328,6 +348,7 @@ local category_rss_build = comp(
 lettersmith.build(
   output_dir, -- output dir
   index_builder(paths),
+  page_builder(pages),
   archive(paths),
   categories_archive_builder(paths),
   builder(paths), -- process all files

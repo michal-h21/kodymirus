@@ -123,6 +123,21 @@ function root(doc)
 end
 
 
+function template.page(doc)
+  doc.contenttype = "blogposting"
+  doc.contents = article {
+    class="h-entry",
+    itemscope="",
+    itemtype="https://schema.org/Article",
+    h.div{
+      class="e-content",
+      itemprop="articleBody",
+      doc.contents
+    }
+  }
+  return root(doc)
+end
+
 function template.post(doc)
   doc.contenttype = "blogposting"
   doc.contents = article {
