@@ -18,6 +18,7 @@ local generate_atom = require "atom".generate_atom
 local render_permalinks = require "lettersmith.permalinks".render_permalinks
 local wrap_in_iter = require("lettersmith.plugin_utils").wrap_in_iter
 local comp = require("lettersmith.transducers").comp
+local paging = require "lettersmith.paging"
 -- it seems that this isn't used anymore:
 -- local archive = require "archive".archive
 local config = require "config"
@@ -113,6 +114,7 @@ end)
 
 local apply_template = make_transformer(function(doc)
   local template = templates[doc.template] or base_template
+  print("Applying template '" .. (doc.template or "post") .. "' to " .. doc.relative_filepath)
   local rendered = template(doc)
   return merge(doc, {contents = rendered})
 end)
@@ -179,15 +181,33 @@ local builder = comp(
 )
 
 
-local html_builder = comp(
-  apply_template,
-  save_checksums, 
-  calc_hash,
+local html_prepare = comp(
   permalinks,
   add_defaults,
   html_filter,
   lettersmith.docs
 )
+
+local html_builder = comp(
+  apply_template,
+  save_checksums, 
+  calc_hash,
+  html_prepare
+)
+
+local use_blog_archive_template = make_transformer(function(doc)
+  -- use blog archive template for blog archive pages
+  doc.template = "blog_archive"
+  return doc
+end)
+
+local blog_archive = comp(
+  apply_template, 
+  use_blog_archive_template,
+  paging "page/:n/index.html",
+  html_prepare
+)
+
 
 local use_pages_template = make_transformer(function(doc)
   -- use page template for pages
@@ -234,6 +254,7 @@ end
 --   archives,
 --   lettersmith.docs
 -- )
+--
 
 
 local main_archive_builder = function(filename, template, count)
@@ -348,6 +369,7 @@ local category_rss_build = comp(
 lettersmith.build(
   output_dir, -- output dir
   index_builder(paths),
+  blog_archive(paths),
   page_builder(pages),
   archive(paths),
   categories_archive_builder(paths),

@@ -138,6 +138,15 @@ function template.page(doc)
   return root(doc)
 end
 
+function template.blog_archive(doc)
+  print("Generating post: ",  doc.title, doc.date, doc.time)
+  doc.date = os.date( "%Y-%m-%d", doc.time )
+  for k, v in pairs(doc) do
+    print("  ", k, "=", v)
+  end
+  return "archive"
+end
+
 function template.post(doc)
   doc.contenttype = "blogposting"
   doc.contents = article {
@@ -185,7 +194,7 @@ end
 local function print_archive_items(doc)
   return h.section{
     class="h-feed",
-    h.h2{id=doc.name, doc.name, h.a{href=doc.feed, h.img{src="rss.svg", style="width:0.8rem"}}},
+    h.h2{id=doc.name, doc.name, h.a{href=doc.feed, h.img{src="rss.svg", width="10"}}},
     map(function(item)
       return h.div{
         class="h-entry",
