@@ -198,13 +198,15 @@ local html_builder = comp(
 local use_blog_archive_template = make_transformer(function(doc)
   -- use blog archive template for blog archive pages
   doc.template = "blog_archive"
+  doc.title = "Page " .. doc.page_number
   return doc
 end)
 
 local blog_archive = comp(
   apply_template, 
   use_blog_archive_template,
-  paging "page/:n/index.html",
+  add_defaults,
+  paging("page/:n/index.html", config.posts_per_page or 10),
   html_prepare
 )
 

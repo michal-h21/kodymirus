@@ -7,6 +7,7 @@ local template = {}
 local h = h5tk.init(true)
 local html, head, body, title, link, article = h.html, h.head, h.body, h.title, h.link, h.article
 
+
 local function map(func, tbl)
   local newtbl = {}
   for i,v in pairs(tbl) do
@@ -14,6 +15,16 @@ local function map(func, tbl)
   end
   return newtbl
 end
+
+local function datetime(time, extraattributes, minutes)
+  local d = date(time)
+  local extraattributes = (extraattributes and extraattributes .. " ") or ""
+  local format = minutes and "%Y-%m-%d %H:%M" or "%Y-%m-%d"
+  local timestamp = d:fmt(format)
+  return "<time ".. extraattributes .. "datetime='" .. timestamp .. "'>" .. timestamp .. "</time>"
+end
+
+
 
 local function human_date(time)
   local d = date(time)
@@ -60,6 +71,7 @@ function root(doc)
   local published_date = os.date("%Y-%m-%d",doc.time)
   local contenttype = doc.contenttype or "website"
   local url = doc.site_url .. "/" .. doc.relative_filepath
+  local menu_separator = ""
   return "<!DOCTYPE html>\n" .. (h.emit(
   html { lang=doc.language, 
     head {prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article",
@@ -112,7 +124,10 @@ function root(doc)
         h.nav{
         role="navigation",["aria-label"]="Main navigation",
         map(function(menuitem)
-          return h.a{href=menuitem.href, menuitem.title}
+          local x = h.emit(h.span{menu_separator, h.a{href=menuitem.href, menuitem.title}})
+          menu_separator = " | "
+          -- remove newlines and spurious spaces from menu
+          return x:gsub("%s+", " "):gsub("> ", ">"):gsub(" <" ,"<")
         end,doc.menu)
       },
       },
@@ -141,10 +156,41 @@ end
 function template.blog_archive(doc)
   print("Generating post: ",  doc.title, doc.date, doc.time)
   doc.date = os.date( "%Y-%m-%d", doc.time )
+  local content = {"<h1>Paging</h1><table>"}
   for k, v in pairs(doc) do
-    print("  ", k, "=", v)
+    -- print("  ", k, "=", v)
+    content[#content+1] = "<tr><td>" .. k .. "</td><td>" .. tostring(v) .. "</td></tr>"
   end
-  return "archive"
+  content[#content+1] = "</table>"
+  content[#content+1] = "<h2>Posts</h2><table>"
+  for k,v in pairs(doc.list) do
+    content[#content+1] = "<tr><td>" .. k .. "</td><td>" .. tostring(v) .. "</td></tr>"
+  end
+  content[#content+1] = "</table><div><p>"
+  if doc.prev_page_path then
+    content[#content+1] = string.format("<a href='/%s'>&lt;</a>", doc.prev_page_path)
+  end
+  if doc.next_page_path then
+    content[#content+1] = string.format("<a href='/%s'>&gt;</a>", doc.next_page_path)
+  end
+  doc.contents = h.article {
+    h.h2{doc.title},
+    h.nav {
+      class="pagination", ["aria-label"] = "Blog paging navigation",
+      map(function(item)
+        return h.article{
+          class="h-entry", 
+          datetime(item.time, "class='dt-published'",  true), 
+          h.a {href=item.relative_filepath, item.title},
+          item.contents
+        }
+      end, doc.list),
+      (doc.prev_page_path and h.a {href="/" .. (doc.prev_page_path or "#"), rel="prev", "&lt; Previous"}),
+      (doc.next_page_path and h.a {href="/" .. (doc.next_page_path or "#"), rel="next", "Next &gt;"}),
+    }
+  }
+
+  return root(doc)
 end
 
 function template.post(doc)
