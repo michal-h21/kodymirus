@@ -168,7 +168,7 @@ local function take_number(index_count)
 end
 
 local permalinks = comp (
-   render_permalinks ":yyyy/:mm/:slug.html"
+   render_permalinks ":yyyy-:mm-:slug.html"
 )
 
 -- prepare list of posts for archives or RSS
@@ -199,7 +199,7 @@ local html_builder = comp(
   html_prepare
 )
 
-local use_blog_archive_template = make_transformer(function(doc)
+local use_note_archive_template = make_transformer(function(doc)
   -- use blog archive template for blog archive pages
   print("Using blog archive template for page " .. doc.page_number)
   doc.template = "blog_archive"
@@ -207,12 +207,12 @@ local use_blog_archive_template = make_transformer(function(doc)
   return doc
 end)
 
-local blog_archive = comp(
+-- make archive of notes with paging
+local note_archive = comp(
   apply_template, 
-  use_blog_archive_template,
+  use_note_archive_template,
   add_defaults,
   paging("page/:n/index.html", config.posts_per_page or 10),
-  -- lettersmith.docs
   html_prepare
 )
 
@@ -376,7 +376,7 @@ local category_rss_build = comp(
 lettersmith.build(
   output_dir, -- output dir
   index_builder(paths),
-  blog_archive(notes),
+  note_archive(notes),
   page_builder(pages),
   archive(paths),
   categories_archive_builder(paths),
