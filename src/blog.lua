@@ -289,7 +289,7 @@ local categories = function()
     for _, x in ipairs(items) do
       local category = x.category or uncategorized 
       local curr = categories[category] or {}
-      table.insert(curr, x)
+      table.insert(curr, shallow_copy(x))
       categories[category] = curr
     end
     return coroutine.wrap(function()
