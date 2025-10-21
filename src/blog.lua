@@ -46,7 +46,9 @@ local rss_count = config.rss_count or 20
 -- number of items on the index page
 local index_count = config.index_count or 5
 local blog_path = arg[1] or config.path or "build"
-local pages_path = config.pages_path or "pages"
+local pages_path = arg[2] or config.pages_path or "pages"
+local notes_path = arg[3] or config.notes_path or "notes"
+print("Notes path is: " .. notes_path)
 local output_dir = config.output_dir or "www"
 local uncategorized = config.uncategorized or "uncategorized"
 local language = config.language or "en"
@@ -54,6 +56,8 @@ local about_page = config.about or "/now"
 
 local paths = lettersmith.paths(blog_path)
 local pages = lettersmith.paths(pages_path)
+local notes = lettersmith.paths(notes_path)
+
 
 -- local render_mustache = require("lettersmith.mustache").choose_mustache
 
@@ -197,6 +201,7 @@ local html_builder = comp(
 
 local use_blog_archive_template = make_transformer(function(doc)
   -- use blog archive template for blog archive pages
+  print("Using blog archive template for page " .. doc.page_number)
   doc.template = "blog_archive"
   doc.title = "Page " .. doc.page_number
   return doc
@@ -207,6 +212,7 @@ local blog_archive = comp(
   use_blog_archive_template,
   add_defaults,
   paging("page/:n/index.html", config.posts_per_page or 10),
+  -- lettersmith.docs
   html_prepare
 )
 
@@ -366,12 +372,11 @@ local category_rss_build = comp(
 
 
 
-
 -- build pages
 lettersmith.build(
   output_dir, -- output dir
   index_builder(paths),
-  blog_archive(paths),
+  blog_archive(notes),
   page_builder(pages),
   archive(paths),
   categories_archive_builder(paths),

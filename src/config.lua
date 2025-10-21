@@ -15,8 +15,10 @@ return {
   site_description = "Kodymirus blog",
   path = "build",
   pages_path = "pages",
+  notes_path = "notes",
   output_dir = "www",
   author_profile = "https://github.com/michal-h21",
   language="en",
-  about="/now" -- address of the about page
+  about="/now", -- address of the about page
+  posts_per_page = 20, -- number of posts per archive page
 }

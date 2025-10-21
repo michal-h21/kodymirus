@@ -164,6 +164,7 @@ function template.blog_archive(doc)
   content[#content+1] = "</table>"
   content[#content+1] = "<h2>Posts</h2><table>"
   for k,v in pairs(doc.list) do
+    print(" Post ", k, v.title, v.time)
     content[#content+1] = "<tr><td>" .. k .. "</td><td>" .. tostring(v) .. "</td></tr>"
   end
   content[#content+1] = "</table><div><p>"
