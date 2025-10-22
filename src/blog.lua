@@ -219,7 +219,8 @@ local note_archive = comp(
   add_defaults,
   paging("/notes/:n/index.html", config.posts_per_page or 10),
   note_permalink,
-  html_prepare
+  html_filter,
+  lettersmith.docs
 )
 
 local note_title = make_transformer(function(doc)
