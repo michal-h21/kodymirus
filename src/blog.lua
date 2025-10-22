@@ -217,7 +217,7 @@ local note_archive = comp(
   apply_template, 
   use_note_archive_template,
   add_defaults,
-  paging("page/:n/index.html", config.posts_per_page or 10),
+  paging("/notes/:n/index.html", config.posts_per_page or 10),
   note_permalink,
   html_prepare
 )
@@ -230,6 +230,7 @@ local note_title = make_transformer(function(doc)
   local new_title = template:gsub(":([%w+])", doc)
   print("Setting note title to: " .. new_title)
   doc.title = doc.title or new_title
+  return doc
 end)
 
 local note_post = comp(
@@ -238,7 +239,7 @@ local note_post = comp(
   -- add_defaults,
   note_title,
   note_permalink,
-  -- add_defaults,
+  add_defaults,
   -- html_filter,
   lettersmith.docs
 )
