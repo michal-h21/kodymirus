@@ -155,16 +155,14 @@ end
 
 function template.blog_archive(doc)
   print("Generating post: ",  doc.title, doc.date, doc.time)
-  doc.date = os.date( "%Y-%m-%d", doc.time )
+  -- doc.date = os.date( "%Y-%m-%d", doc.time )
   local content = {"<h1>Paging</h1><table>"}
   for k, v in pairs(doc) do
-    -- print("  ", k, "=", v)
     content[#content+1] = "<tr><td>" .. k .. "</td><td>" .. tostring(v) .. "</td></tr>"
   end
   content[#content+1] = "</table>"
   content[#content+1] = "<h2>Posts</h2><table>"
   for k,v in pairs(doc.list) do
-    print(" Post ", k, v.title, v.time)
     content[#content+1] = "<tr><td>" .. k .. "</td><td>" .. tostring(v) .. "</td></tr>"
   end
   content[#content+1] = "</table><div><p>"
@@ -183,7 +181,8 @@ function template.blog_archive(doc)
           class="h-entry", 
           datetime(item.time, "class='dt-published'",  true), 
           h.a {href=item.relative_filepath, item.title},
-          item.contents
+          item.contents,
+          h.p{h.a {href=item.relative_filepath, "Permalink"}}
         }
       end, doc.list),
       (doc.prev_page_path and h.a {href="/" .. (doc.prev_page_path or "#"), rel="prev", "&lt; Previous"}),

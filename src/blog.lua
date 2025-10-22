@@ -168,7 +168,12 @@ local function take_number(index_count)
 end
 
 local permalinks = comp (
-   render_permalinks ":yyyy-:mm-:slug.html"
+   render_permalinks "/blog/:yyyy-:mm-:slug.html"
+)
+
+
+local note_permalink = comp (
+   render_permalinks "/notes/:yyyy-:mm-:dd-:slug.html"
 )
 
 -- prepare list of posts for archives or RSS
@@ -213,7 +218,29 @@ local note_archive = comp(
   use_note_archive_template,
   add_defaults,
   paging("page/:n/index.html", config.posts_per_page or 10),
+  note_permalink,
   html_prepare
+)
+
+local note_title = make_transformer(function(doc)
+  -- some notes may not have title, we need to add a dummy title then
+  local template = config.note_title_template or "Note published on :human_date"
+  -- replace variables in the template
+  print("Generating title for note " .. doc.relative_filepath)
+  local new_title = template:gsub(":([%w+])", doc)
+  print("Setting note title to: " .. new_title)
+  doc.title = doc.title or new_title
+end)
+
+local note_post = comp(
+  apply_template, 
+  -- use_note_archive_template,
+  -- add_defaults,
+  note_title,
+  note_permalink,
+  -- add_defaults,
+  -- html_filter,
+  lettersmith.docs
 )
 
 
@@ -377,6 +404,7 @@ lettersmith.build(
   output_dir, -- output dir
   index_builder(paths),
   note_archive(notes),
+  note_post(notes),
   page_builder(pages),
   archive(paths),
   categories_archive_builder(paths),
