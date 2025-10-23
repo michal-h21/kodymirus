@@ -219,6 +219,7 @@ local note_archive = comp(
   add_defaults,
   paging("/notes/:n/index.html", config.posts_per_page or 10),
   note_permalink,
+  add_defaults,
   html_filter,
   lettersmith.docs
 )
