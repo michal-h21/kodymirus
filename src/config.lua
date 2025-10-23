@@ -16,7 +16,7 @@ return {
   path = "build",
   pages_path = "pages",
   notes_path = "notes",
-  note_title_template = "Note published on :human_date",
+  note_title_template = "Note published on :humandate",
   output_dir = "www",
   author_profile = "https://github.com/michal-h21",
   language="en",
