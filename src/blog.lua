@@ -228,15 +228,7 @@ local note_title = make_transformer(function(doc)
   -- some notes may not have title, we need to add a dummy title then
   local template = config.note_title_template or "Note published on :humandate"
   -- replace variables in the template
-  for k,v in pairs(doc) do
-    print("Note variable: " .. k .. " = " .. tostring(v))
-  end
-  print("Generating title for note " .. doc.relative_filepath)
-  local new_title = template:gsub(":([%w%_%-]+)", function(key)
-    print("Replacing key: " .. key)
-    return tostring(doc[key] or "")
-  end)
-  print("Setting note title to: " .. new_title)
+  local new_title = template:gsub(":([%w%_%-]+)", doc)
   doc.title = doc.title or new_title
   return doc
 end)

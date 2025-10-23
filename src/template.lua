@@ -153,25 +153,10 @@ function template.page(doc)
   return root(doc)
 end
 
+
+
 function template.blog_archive(doc)
   print("Generating post: ",  doc.title, doc.date, doc.time)
-  -- doc.date = os.date( "%Y-%m-%d", doc.time )
-  local content = {"<h1>Paging</h1><table>"}
-  for k, v in pairs(doc) do
-    content[#content+1] = "<tr><td>" .. k .. "</td><td>" .. tostring(v) .. "</td></tr>"
-  end
-  content[#content+1] = "</table>"
-  content[#content+1] = "<h2>Posts</h2><table>"
-  for k,v in pairs(doc.list) do
-    content[#content+1] = "<tr><td>" .. k .. "</td><td>" .. tostring(v) .. "</td></tr>"
-  end
-  content[#content+1] = "</table><div><p>"
-  if doc.prev_page_path then
-    content[#content+1] = string.format("<a href='/%s'>&lt;</a>", doc.prev_page_path)
-  end
-  if doc.next_page_path then
-    content[#content+1] = string.format("<a href='/%s'>&gt;</a>", doc.next_page_path)
-  end
   doc.contents = h.article {
     h.h2{doc.title},
     h.nav {
