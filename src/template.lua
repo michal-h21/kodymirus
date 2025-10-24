@@ -155,7 +155,7 @@ end
 
 
 
-function template.blog_archive(doc)
+function template.note_archive(doc)
   print("Generating post: ",  doc.title, doc.date, doc.time)
   doc.contents = h.article {
     h.h2{doc.title},

@@ -207,7 +207,7 @@ local html_builder = comp(
 local use_note_archive_template = make_transformer(function(doc)
   -- use blog archive template for blog archive pages
   print("Using blog archive template for page " .. doc.page_number)
-  doc.template = "blog_archive"
+  doc.template = "note_archive"
   doc.title = "Page " .. doc.page_number
   return doc
 end)
