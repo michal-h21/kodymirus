@@ -97,6 +97,10 @@ function root(doc)
       h.link{rel="me",  href="https://twitter.com/michalh21"},
       h.link{rel="me",  href="mailto:michal.h21@gmail.com"},
       h.link{ rel="authorization_endpoint", href="https://indieauth.com/auth"},
+       h.link{ rel="apple-touch-icon", sizes="180x180", href="/apple-touch-icon.png" },
+       h.link{ rel="icon", type="image/png", sizes="32x32", href="/favicon-32x32.png" },
+       h.link{ rel="icon", type="image/png", sizes="16x16", href="/favicon-16x16.png" },
+       h.link{ rel="manifest", href="/site.webmanifest" },
 
       h.meta{name="twitter:creator", content="@michalh21"},
       -- rss feeds
