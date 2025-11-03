@@ -8,5 +8,5 @@ test:
 	mkdir -p $(test_path)
 	lua test/make_test_posts.lua
 	lua src/blog.lua $(test_path) test/pages test/notes
-	cp test/rss.svg test/*.css www/
+	cp -a test/static/. www/
 
