@@ -6,6 +6,7 @@ return {
     menuitem("Home", "/index.html"),
     menuitem("Projects", "/projects.html"),
     menuitem("Archive", "/archive.html"),
+    menuitem("Notes", "/notes/1/"),
     menuitem("About", "/about.html")
   },
   site_url = "https://www.kodymirus.cz",
