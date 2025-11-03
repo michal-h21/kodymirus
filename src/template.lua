@@ -168,10 +168,10 @@ function template.note_archive(doc)
       map(function(item)
         return h.article{
           class="h-entry", 
-          datetime(item.time, "class='dt-published'",  true), 
-          h.a {href=item.relative_filepath, item.title},
+          (item.title and h.a {href=item.relative_filepath, item.title}),
           item.contents,
-          h.p{h.a {href=item.relative_filepath, "Permalink"}}
+          h.p{h.a {href=item.relative_filepath, "Permalink"}},
+          datetime(item.time, "class='dt-published'",  true), 
         }
       end, doc.list),
       (doc.prev_page_path and h.a {href="/" .. (doc.prev_page_path or "#"), rel="prev", "&lt; Previous"}),

@@ -417,8 +417,8 @@ local note_rss = comp(
 lettersmith.build(
   output_dir, -- output dir
   index_builder(paths),
-  note_rss(notes),
   note_archive(notes),
+  note_rss(notes),
   note_post(notes),
   page_builder(pages),
   archive(paths),
