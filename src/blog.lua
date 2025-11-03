@@ -370,11 +370,11 @@ end
 
 
 
-local main_rss = function()
+local main_rss = function(category)
   return function(iter, ...)
     local items = into(take_items(function() return true end),iter, ...)
     return coroutine.wrap(function()
-      coroutine.yield {category="feed", items = items}
+      coroutine.yield {category= category or "feed", items = items}
     end)
   end
 end
@@ -398,12 +398,26 @@ local category_rss_build = comp(
   lettersmith.docs
 )
 
+local note_rss = comp(
+  categories_to_rss(rss_count),
+  main_rss("notes"), -- this make only one category, "notes", which is then saved as notes.rss
+  -- it is better to show full posts, actually
+  -- abstract_to_content, -- don't show full posts
+  -- archives,
+  note_permalink,
+  note_title,
+  add_defaults,
+  html_filter,
+  lettersmith.docs
+)
+
 
 
 -- build pages
 lettersmith.build(
   output_dir, -- output dir
   index_builder(paths),
+  note_rss(notes),
   note_archive(notes),
   note_post(notes),
   page_builder(pages),
