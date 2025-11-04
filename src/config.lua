@@ -18,6 +18,7 @@ return {
   pages_path = "pages",
   notes_path = "notes",
   note_title_template = "Note published on :humandate",
+  note_archive_title_template = "Notes archive - page :n",
   output_dir = "www",
   author_profile = "https://github.com/michal-h21",
   language="en",
