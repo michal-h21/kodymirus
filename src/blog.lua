@@ -167,6 +167,10 @@ local function take_number(index_count)
   return comp(take(index_count), map(function(doc) return shallow_copy(doc) end)) 
 end
 
+local copy_doc = make_transformer(function(doc)
+  return shallow_copy(doc)
+end)
+
 local permalinks = comp (
    render_permalinks "/blog/:yyyy-:mm-:slug.html"
 )
@@ -401,11 +405,14 @@ local category_rss_build = comp(
 local note_rss = comp(
   categories_to_rss(rss_count),
   main_rss("notes"), -- this make only one category, "notes", which is then saved as notes.rss
-  -- it is better to show full posts, actually
+  -- it is better to show full posts, actually:
   -- abstract_to_content, -- don't show full posts
   -- archives,
   note_permalink,
   note_title,
+  -- to avoid setting title in original document, we need it to be empty in the note archive page. 
+  -- if we didn't copy it in this transformation, it would be set also in other transformatins:
+  copy_doc,
   add_defaults,
   html_filter,
   lettersmith.docs
