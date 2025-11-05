@@ -89,7 +89,7 @@ function root(doc)
       h.meta{property="dc:identifier dcterm:URI og:url", content=url},
       h.meta{property="dc:type og:type", content=contenttype},
       -- opengraph("title", doc.title),
-      -- opengraph("url", url),
+      opengraph("url", url),
       ogarticle("author", doc.author_profile),
       -- ogarticle("published", published_date),
       -- opengraph("sitename", doc.site_title),
@@ -161,7 +161,7 @@ end
 
 function template.note_archive(doc)
   print("Generating post: ",  doc.title, doc.date, doc.time)
-  doc.contents = h.article {
+  doc.contents = h.section {class="note-archive",
     h.h2{doc.title},
     h.nav {
       class="pagination", ["aria-label"] = "Blog paging navigation",
@@ -170,8 +170,7 @@ function template.note_archive(doc)
           class="h-entry", 
           (item.title and h.a {href=item.relative_filepath, item.title}),
           item.contents,
-          h.p{h.a {href=item.relative_filepath, "Permalink"}},
-          datetime(item.time, "class='dt-published'",  true), 
+          h.p{class="permalink", h.a {["aria-label"]="Permalink to the note", class="permalink-link", href=item.relative_filepath,datetime(item.time, "class='dt-published'",  true),  "🔗"}},
         }
       end, doc.list),
       (doc.prev_page_path and h.a {href="/" .. (doc.prev_page_path or "#"), rel="prev", "&lt; Previous"}),
@@ -198,6 +197,30 @@ function template.post(doc)
       },
     },
     h.section{class="abstract p-summary", itemprop="abstract", role="doc-abstract", doc.abstract},
+    h.div{
+      class="e-content",
+      itemprop="articleBody",
+      doc.contents
+    }
+  }
+  return root(doc)
+end
+
+function template.note_post(doc)
+  doc.contenttype = "blogposting"
+  doc.contents = article {
+    class="h-entry",
+    itemscope="",
+    itemtype="https://schema.org/Article",
+    h.header{
+      h.h2 {class="p-name", itemprop="name", doc.title},
+      h.p {
+        "Published by ", h.a{itemprop="author",href=doc.about_page,class="p-author h-card", doc.author}, 
+        -- h5tk doesn't know the <time> element, so it is necessary to use it in string
+        ' on <time itemprop="datePublished" class="dt-published" datetime="' .. doc.date ..'">'..human_date( doc.time) ..'</time>'
+      },
+    },
+    -- h.section{class="abstract p-summary", itemprop="abstract", role="doc-abstract", doc.abstract},
     h.div{
       class="e-content",
       itemprop="articleBody",

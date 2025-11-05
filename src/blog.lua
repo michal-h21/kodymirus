@@ -230,6 +230,12 @@ local note_archive = comp(
   lettersmith.docs
 )
 
+local use_note_post_template = make_transformer(function(doc)
+  -- use note template for notes
+  doc.template = "note_post"
+  return doc
+end)
+
 local note_title = make_transformer(function(doc)
   -- some notes may not have title, we need to add a dummy title then
   local template = config.note_title_template or "Note published on :humandate"
@@ -243,6 +249,7 @@ local note_post = comp(
   apply_template, 
   -- use_note_archive_template,
   -- add_defaults,
+  use_note_post_template,
   note_title,
   note_permalink,
   add_defaults,
@@ -356,6 +363,7 @@ local categories_archive_builder = comp(
   add_defaults,
   categories_archive("Archive by category", "category-archive.html", "categoryarchive"),
   categories(),
+  copy_doc,
   archives,
   lettersmith.docs
 )
@@ -392,6 +400,7 @@ local make_main_rss = comp(
   -- it is better to show full posts, actually
   -- abstract_to_content, -- don't show full posts
   archives,
+  copy_doc,
   lettersmith.docs
 )
 
@@ -401,6 +410,7 @@ local category_rss_build = comp(
   -- it is better to show full posts, actually
   -- abstract_to_content, -- don't show full posts
   archives,
+  copy_doc,
   lettersmith.docs
 )
 
