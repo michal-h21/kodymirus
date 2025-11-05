@@ -24,6 +24,19 @@ a:hover{
   color: var(--hover-color);
 }
 
+.note-archive article{
+  border-bottom: 1px solid var(--foreground-color);
+  &:last-child{
+    border-bottom: none;
+  }
+}
+
+p.permalink{
+  font-size: 0.9rem;
+  a {color: var(--foreground-color); text-decoration: none;}
+  a:hover{text-decoration: underline;}
+}
+
 #home{margin-bottom:0.5rem;}
 #home a{color: var(--foreground-color); text-decoration: none;}
 #home a:hover{text-decoration: underline;}
