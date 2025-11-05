@@ -31,6 +31,11 @@ a:hover{
   }
 }
 
+.publish-info{
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
 p.permalink{
   font-size: 0.9rem;
   a {color: var(--foreground-color); text-decoration: none;}
