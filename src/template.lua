@@ -189,7 +189,7 @@ function template.post(doc)
     itemtype="https://schema.org/Article",
     h.header{
       h.h2 {class="p-name", itemprop="name", doc.title},
-      h.p {
+      h.p { class="publish-info",
         "Published by ", h.a{itemprop="author",href=doc.about_page,class="p-author h-card", doc.author}, 
         -- h5tk doesn't know the <time> element, so it is necessary to use it in string
         ' on <time itemprop="datePublished" class="dt-published" datetime="' .. doc.date ..'">'..human_date( doc.time) ..'</time>', 
@@ -214,7 +214,7 @@ function template.note_post(doc)
     itemtype="https://schema.org/Article",
     h.header{
       h.h2 {class="p-name", itemprop="name", doc.title},
-      h.p {
+      h.p {class="publish-info",
         "Published by ", h.a{itemprop="author",href=doc.about_page,class="p-author h-card", doc.author}, 
         -- h5tk doesn't know the <time> element, so it is necessary to use it in string
         ' on <time itemprop="datePublished" class="dt-published" datetime="' .. doc.date ..'">'..human_date( doc.time) ..'</time>'
