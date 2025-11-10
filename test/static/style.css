@@ -71,6 +71,11 @@ nav ul li:first-child:before{content:"";margin-right:0rem;}
 
 p {margin: 1ex 0;}
 
+header.site-header{
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--foreground-color);
+}
 footer{
   text-align: center;
 }
@@ -107,7 +112,7 @@ footer {
 }
 
 h2{
-  border-top: 1px solid var(--foreground-color);
+  /* border-top: 1px solid var(--foreground-color); */
   padding: 1rem 0;
 }
 
@@ -136,6 +141,13 @@ h2{
   img, video, iframe {
       background-color: #fcfcfc;
   }
+
+img[src="rss.svg"] {
+  height: 1em;
+  vertical-align: middle;
+  width: auto;
+  border: 1px solid var(--foreground-color);
+}
 
   pre {
       background-color: #fcfcfc;

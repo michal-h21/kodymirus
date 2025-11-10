@@ -123,7 +123,7 @@ function root(doc)
       (styles(doc.styles)),
     },
     body {
-      h.header{
+      h.header{class="site-header",
         h.h1{id="home", h.a{href="/", doc.site_title}},
         h.nav{
         role="navigation",["aria-label"]="Main navigation",
@@ -252,7 +252,7 @@ end
 local function print_archive_items(doc)
   return h.section{
     class="h-feed",
-    h.h2{id=doc.name, doc.name, h.a{href=doc.feed, h.img{src="rss.svg", width="10"}}},
+    h.h2{id=doc.name, doc.name, h.a{href=doc.feed, h.img{src="rss.svg"}}},
     map(function(item)
       return h.div{
         class="h-entry",
@@ -266,9 +266,9 @@ end
 
 function template.archive(doc)
   doc.name="Archive"
-  doc.feed="feed.rss"
-  doc.contents = article {
-    h.h1{doc.title},
+  doc.feed= doc.feed or "feed.xml"
+  doc.contents = {
+    -- h.h1{doc.title},
     h.aside{h.p{h.a{href="category-archive.html", "Category archive"}}},
     print_archive_items(doc)
   }
