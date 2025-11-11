@@ -124,16 +124,18 @@ function root(doc)
     },
     body {
       h.header{class="site-header",
-        h.h1{id="home", h.a{href="/", doc.site_title}},
+        h.h1{id="home", h.a{href="/", h.img{class="logo", src="/kodymirus.svg", alt=""}, doc.site_title}},
         h.nav{
-        role="navigation",["aria-label"]="Main navigation",
+        role="navigation",["aria-label"]="Main navigation", h.ul{
         map(function(menuitem)
-          local x = h.emit(h.span{menu_separator, h.a{href=menuitem.href, menuitem.title}})
-          menu_separator = " | "
+          -- local x = h.emit(h.span{menu_separator, h.a{href=menuitem.href, menuitem.title}})
+          -- menu_separator = " | "
+          local x = h.emit(h.li{h.a{href=menuitem.href, menuitem.title}})
           -- remove newlines and spurious spaces from menu
-          return x:gsub("%s+", " "):gsub("> ", ">"):gsub(" <" ,"<")
+          x = x:gsub("%s+", " "):gsub("> ", ">"):gsub(" <" ,"<")
+          return x
         end,doc.menu)
-      },
+      }},
       },
       h.main{doc.contents},
       h.footer{h.p{"© 2025 <a rel='me' class='h-card' href='https://github.com/michal-h21'>Michal Hoftich</a>"}}
@@ -280,8 +282,8 @@ function template.categoryarchive(doc)
   map(function(c) 
     c.feed = c.name .. ".xml" 
   end, doc.categories)
-  doc.contents = article {
-    h.h1 {doc.title},
+  doc.contents = {
+    h.h2 {doc.title},
     h.details{
       h.summary {"Table of contents"},
       h.nav{
