@@ -103,9 +103,9 @@ function root(doc)
        h.link{ rel="manifest", href="/site.webmanifest" },
 
       h.meta{name="twitter:creator", content="@michalh21"},
-      -- rss feeds
-      h.link{rel="alternate", type="application/rss+xml", title="Main feed", href="/" .. doc.feed},
-      h.link{rel="alternate", type="application/rss+xml", title="Category feed", href="/" .. doc.category_feed},
+      -- atom feeds
+      h.link{rel="alternate", type="application/atom+xml", title="Main feed", href="/" .. doc.feed},
+      h.link{rel="alternate", type="application/atom+xml", title="Category feed", href="/" .. doc.category_feed},
       -- define dublin core schemas
       -- not necessary anymore
       -- h.link{rel="schema.DC", href="http://purl.org/dc/elements/1.1/"},
@@ -278,7 +278,7 @@ end
 function template.categoryarchive(doc)
   -- save category feeds
   map(function(c) 
-    c.feed = c.name .. ".rss" 
+    c.feed = c.name .. ".xml" 
   end, doc.categories)
   doc.contents = article {
     h.h1 {doc.title},
