@@ -80,6 +80,13 @@ footer{
   text-align: center;
 }
 
+/* RSS icon style */
+img[src="rss.svg"] {
+  height: 1em;
+  vertical-align: bottom;
+  width: auto;
+}
+
 /* Fonts */
 body{
   font-family: Charter, 'Bitstream Charter', 'Sitka Text', 'Linux Libertine O', 'Gentium Book', serif;
@@ -142,13 +149,6 @@ h2{
       background-color: #fcfcfc;
   }
 
-img[src="rss.svg"] {
-  height: 1em;
-  vertical-align: middle;
-  width: auto;
-  border: 1px solid var(--foreground-color);
-}
-
   pre {
       background-color: #fcfcfc;
   }
@@ -160,7 +160,5 @@ img[src="rss.svg"] {
   footer {
     border-top: 1px solid #ececec;
   }
-
-
 
 }
