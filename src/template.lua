@@ -232,23 +232,13 @@ function template.note_post(doc)
   return root(doc)
 end
 
-
-function template.index(doc)
-  doc.contents = article {
-    -- h.h1{doc.title},
-    map(function(v)
-      return article {
-        h.header{
-          h.h2{ h.a {href=v.relative_filepath, v.title }},
-          h.p{h.time{datetime=os.date( "%Y-%m-%d", v.time ),os.date( "%Y-%m-%d", v.time )}}
-        },
-        v.abstract,
-        h.p {h.a {href=v.relative_filepath, "More"}}
-      }
-    end, doc.items),
-    h.p{h.a{href="archive.html", "Archive"}}
-  }
-  return root(doc)
+local function print_article_titles(items)
+  return map(function(item)
+    return h.div{
+      class="h-entry",
+      h.p{os.date( "%Y-%m-%d", item.time ), h.a {href=item.relative_filepath, item.title}}
+    }
+  end,items)
 end
 
 local function print_archive_items(doc)
@@ -263,6 +253,29 @@ local function print_archive_items(doc)
     end, doc.items)
   }
 end
+
+function template.index(doc)
+  doc.contents = article {
+    -- h.h1{doc.title},
+    h.h2{"Latest notes"},
+    print_article_titles(doc.notes),
+    h.h2{"Latest blog posts"},
+    print_article_titles(doc.items),
+    -- map(function(v)
+    --   return article {
+    --     -- h.header{
+    --       h.h3{ h.a {href=v.relative_filepath, v.title }},
+    --       -- h.p{h.time{datetime=os.date( "%Y-%m-%d", v.time ),os.date( "%Y-%m-%d", v.time )}}
+    --     }
+    --     -- v.abstract,
+    --     -- h.p {h.a {href=v.relative_filepath, "More"}}
+    -- end, doc.items),
+    h.div{"Number of notes", #doc.notes, h.a{href="notes/1/", "Note archive"}},
+    h.p{h.a{href="archive.html", "Archive"}}
+  }
+  return root(doc)
+end
+
         
 
 

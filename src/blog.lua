@@ -276,7 +276,7 @@ local page_builder = comp(
 
 
 -- index page generation
-local make_index = function(name, index_count, template)
+local make_index = function(name, index_count, template, note_archive_docs)
   -- take latest posts and compile them to a table
   return function(iter, ...)
     local items 
@@ -291,7 +291,8 @@ local make_index = function(name, index_count, template)
       relative_filepath = name,
       items = items,
       contents = "",
-      template = template
+      template = template,
+      notes = note_archive_docs or {}
     }
   end
 end
@@ -306,17 +307,26 @@ end
 --
 
 
-local main_archive_builder = function(filename, template, count)
+local main_archive_builder = function(filename, template, count, notes)
+  local note_archive_docs = {}
+  -- I want to show both blog posts and notes on the index page. notes can be iterator created by lettersmith.docs
+  -- if present, I will copy them to a table that will be available in the index document, so it can be used in templates
+  if notes then
+    local notes_docs = lettersmith.docs(notes)
+    for doc in notes_docs do
+      table.insert(note_archive_docs, shallow_copy(doc))
+    end
+  end
   return comp(
   apply_template, 
   add_defaults,
-  make_index(filename, count, template),
+  make_index(filename, count, template, note_archive_docs),
   archives,
   lettersmith.docs
   )
 end
 
-local index_builder = main_archive_builder("index.html", "index", index_count)
+local index_builder = main_archive_builder("index.html", "index", index_count, notes)
 local archive = main_archive_builder("archive.html", "archive")
 
 
