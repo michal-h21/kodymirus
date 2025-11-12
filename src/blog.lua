@@ -313,8 +313,15 @@ local main_archive_builder = function(filename, template, count, notes)
   -- if present, I will copy them to a table that will be available in the index document, so it can be used in templates
   if notes then
     local notes_docs = lettersmith.docs(notes)
+    local i = 1
     for doc in notes_docs do
-      table.insert(note_archive_docs, shallow_copy(doc))
+      if i > count then break end
+      local newdoc = shallow_copy(doc)
+      -- we must add default dates
+      print("note doc", newdoc.date, newdoc.time)
+      newdoc.time = newdoc.time or os.time()
+      newdoc.date = newdoc.date or os.date("%Y-%m-%d", doc.time)
+      table.insert(note_archive_docs, newdoc)
     end
   end
   return comp(
