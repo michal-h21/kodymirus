@@ -91,7 +91,7 @@ end))
 local html_filter = make_filter("html$")
 local nonhtml_filter = make_negative_filter("html$")
 
-function parse_datetime(str)
+local function parse_datetime(str)
   if not str then return nil end
   local year, month, day, hour, min = str:match("(%d+)%-(%d+)%-(%d+)%s+(%d+):(%d+)")
   return os.time({
@@ -229,6 +229,7 @@ local use_note_archive_template = make_transformer(function(doc)
   doc.title = title_template
   return doc
 end)
+
 
 
 -- make archive of notes with paging
