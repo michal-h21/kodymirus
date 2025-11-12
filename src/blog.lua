@@ -91,6 +91,19 @@ end))
 local html_filter = make_filter("html$")
 local nonhtml_filter = make_negative_filter("html$")
 
+function parse_datetime(str)
+  if not str then return nil end
+  local year, month, day, hour, min = str:match("(%d+)%-(%d+)%-(%d+)%s+(%d+):(%d+)")
+  return os.time({
+    year = tonumber(year),
+    month = tonumber(month),
+    day = tonumber(day),
+    hour = tonumber(hour),
+    min = tonumber(min),
+    sec = 0,
+  })
+end
+
 local add_defaults = make_transformer(function(doc)
   -- potentially add default variables
   doc.menu = config.menu
@@ -107,7 +120,7 @@ local add_defaults = make_transformer(function(doc)
     -- add default style
     table.insert(doc.styles, "/style.css")
   -- end
-  doc.time = doc.time or os.time()
+  doc.time = doc.time or parse_datetime(doc.timestamp) or os.time()
   doc.date = doc.date or os.date("%Y-%m-%d", doc.time)
   doc.author = doc.author or site_author
   doc.author_profile = author_profile
@@ -154,7 +167,6 @@ local calc_hash = make_transformer(function(doc)
   local hash = checksum.crc32(doc.contents)
   return merge(doc, {checksum = hash})
 end)
-
 
 
 -- transform document iterator into table
@@ -217,6 +229,7 @@ local use_note_archive_template = make_transformer(function(doc)
   doc.title = title_template
   return doc
 end)
+
 
 -- make archive of notes with paging
 local note_archive = comp(
@@ -318,9 +331,7 @@ local main_archive_builder = function(filename, template, count, notes)
       if i > count then break end
       local newdoc = shallow_copy(doc)
       -- we must add default dates
-      print("note doc", newdoc.date, newdoc.time)
-      newdoc.time = newdoc.time or os.time()
-      newdoc.date = newdoc.date or os.date("%Y-%m-%d", doc.time)
+      newdoc.time = newdoc.time or parse_datetime(doc.timestamp) or os.time()
       table.insert(note_archive_docs, newdoc)
     end
   end

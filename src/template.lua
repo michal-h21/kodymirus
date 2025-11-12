@@ -256,7 +256,9 @@ function template.index(doc)
   doc.contents = article {
     -- h.h1{doc.title},
     h.h2{"Latest notes"},
-    note_archive_items(doc.notes),
+    h.section{class="note-archive",
+      note_archive_items(doc.notes),
+    },
     h.h2{"Latest blog posts"},
     print_article_titles(doc.items),
     h.div{"Number of notes", #doc.notes, h.a{href="notes/1/", "Note archive"}},
