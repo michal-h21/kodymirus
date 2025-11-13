@@ -220,12 +220,27 @@ local html_builder = comp(
   html_prepare
 )
 
+local note_archive_page_count = 0
+
+--- count number of pages in the note archive
+for doc in lettersmith.docs(notes) do
+  -- this counts total number of notes
+  note_archive_page_count = note_archive_page_count + 1
+end
+
+config.posts_per_page = 1
+
+local total_note_archive_pages = math.ceil(note_archive_page_count / (config.posts_per_page or 10))
+
+
 local use_note_archive_template = make_transformer(function(doc)
   -- use blog archive template for blog archive pages
-  print("Using blog archive template for page " .. doc.page_number)
+  print("Using blog archive template for page " .. doc.page_number, total_note_archive_pages)
   doc.template = "note_archive"
   local title_template = config.note_archive_title_template or "Notes - Page :n"
   title_template = title_template:gsub(":n", doc.page_number)
+  print("next page path", doc.next_page_path)
+  doc.total_pages = total_note_archive_pages
   doc.title = title_template
   return doc
 end)
@@ -238,6 +253,7 @@ local note_archive = comp(
   use_note_archive_template,
   add_defaults,
   paging("/notes/:n/index.html", config.posts_per_page or 10),
+  -- paging("/notes/:n/index.html", 2),
   note_permalink,
   add_defaults,
   html_filter,

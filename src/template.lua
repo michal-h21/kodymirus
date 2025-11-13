@@ -176,11 +176,17 @@ function template.note_archive(doc)
   doc.contents = h.section {class="note-archive",
     h.h2{doc.title},
     note_archive_items(doc.list),
-    h.nav {
-      class="pagination", ["aria-label"] = "Blog paging navigation",
-      (doc.prev_page_path and h.a {href="/" .. (doc.prev_page_path or "#"), rel="prev", "&lt; Previous"}),
-      (doc.next_page_path and h.a {href="/" .. (doc.next_page_path or "#"), rel="next", "Next &gt;"}),
-    }
+    (function ()
+      local h = h5tk.init(false)
+      return h.emit(h.nav {
+        class="pagination", ["aria-label"] = "Blog paging navigation",
+        ((doc.total_pages > 1) and h.a{href="/notes/1", rel="first", h.span {class="page-count", "&lt;&lt;"}} or ""),
+        (doc.prev_page_path and {"&nbsp;", h.a {href= (doc.prev_page_path or "#"), rel="prev", "&lt;"}}),
+        ((doc.total_pages > 1) and {h.span {class="page-count", " Page " .. doc.page_number .. " of " .. doc.total_pages }, " "} or ""),
+        (doc.next_page_path and { h.a {href=(doc.next_page_path or "#"), rel="next", "&gt;", "&nbsp;"}}),
+        ((doc.total_pages > 1) and h.a{href="/notes/" .. doc.total_pages, rel="last", h.span {class="page-count", "&gt;&gt;"}} or ""),
+      })
+    end)
   }
 
   return root(doc)
