@@ -177,13 +177,13 @@ function template.note_archive(doc)
     h.h2{doc.title},
     note_archive_items(doc.list),
     (function ()
-      local h = h5tk.init(false)
+      local h = h5tk.init(false) -- false will collapse whitespace
       return h.emit(h.nav {
         class="pagination", ["aria-label"] = "Blog paging navigation",
         ((doc.total_pages > 1) and h.a{href="/notes/1", rel="first", h.span {class="page-count", "&lt;&lt;"}} or ""),
         (doc.prev_page_path and {"&nbsp;", h.a {href= (doc.prev_page_path or "#"), rel="prev", "&lt;"}}),
         ((doc.total_pages > 1) and {h.span {class="page-count", " Page " .. doc.page_number .. " of " .. doc.total_pages }, " "} or ""),
-        (doc.next_page_path and { h.a {href=(doc.next_page_path or "#"), rel="next", "&gt;", "&nbsp;"}}),
+        (doc.next_page_path and { h.a {href=(doc.next_page_path or "#"), rel="next", "&gt;"}, "&nbsp;"}),
         ((doc.total_pages > 1) and h.a{href="/notes/" .. doc.total_pages, rel="last", h.span {class="page-count", "&gt;&gt;"}} or ""),
       })
     end)
