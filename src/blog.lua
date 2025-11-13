@@ -228,7 +228,8 @@ for doc in lettersmith.docs(notes) do
   note_archive_page_count = note_archive_page_count + 1
 end
 
-config.posts_per_page = 1
+-- this is for testing of paging:
+-- config.posts_per_page = 1
 
 local total_note_archive_pages = math.ceil(note_archive_page_count / (config.posts_per_page or 10))
 
