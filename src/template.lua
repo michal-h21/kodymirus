@@ -138,7 +138,15 @@ function root(doc)
       }},
       },
       h.main{doc.contents},
-      h.footer{h.p{"© 2025 <a rel='me' class='h-card' href='https://github.com/michal-h21'>Michal Hoftich</a>"}}
+      h.footer{
+        h.p{"© 2025", h.a{ rel='me', class='h-card', href='https://github.com/michal-h21', "Michal Hoftich"}},
+        h.nav{["aria-label"]="Social links",h.ul{
+          h.li{h.a{ href="https://github.com/michal-h31",rel="me", "GitHub"}},
+          h.li{h.a{ href="https://tex.stackexchange.com/users/2891/michal-h31", rel="me", "TeX.se"}},
+          h.li{h.a{rel="me", href="https://fosstodon.org/@michal_h31", "Mastodon"}},
+        }},
+        h.p{h.a{href="https://creativecommons.org/licenses/by-sa/4.0/", "CC BY-SA 4.0"}},
+      }
     }
   }))
 end
